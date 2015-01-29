@@ -73,7 +73,6 @@ funcoes:  { [] }
 /* define a estrutura de uma funcao e cria a funcao */
 funcao: DEF tipo ID APAR parametros FPAR DPONTOS NOVALINHA
 INDENTA comandos DEDENTA { cria_funcao 1 $2 $3 $5 $10 };
-
 /* define a estrutura de uma lista de funcoes e um parametro e cria o
 parametro */
 tipo:   INT_PARSE {Some TInt}
@@ -82,7 +81,6 @@ tipo:   INT_PARSE {Some TInt}
 parametros: { [] }
                      | parametros parametro { $1 @ [ $2 ] }
                      ;
-
 /* um parametro pode estar seguido de virgula ou nao */
 parametro: tipo ID VIRG { cria_parametro 1 $1 $2 }
                 |  tipo ID { cria_parametro 1 $1 $2 };

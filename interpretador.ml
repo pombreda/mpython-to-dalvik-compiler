@@ -530,17 +530,17 @@ and avalia_op_bool_bool op v1 v2 =
                              else print_string("false")
       | _ -> ignore()
 
-let avalia_input e1 e2 amb =
-  match e2 with
+(* let avalia_input e1 e2 amb =
+  (match e2 with
     | ExpString v -> print_string(v);
                             print_char('\n')
-    | _ -> failwith "Esperava String"
-  and valor = avalia_exp e1 amb in
+    | _ -> failwith "Esperava String")
+  let valor = avalia_exp e1 amb in
     (match e1.valor  with
         (Some (ExpVar var)) ->
             (let entrada = Hashtbl.find amb var in
                 Hashtbl.replace amb var { entrada with valor = valor};)
-        | _ -> failwith "Esperava variavel")
+        | _ -> failwith "Esperava variavel") *)
 
 
  (* let rec avalia_intparse e1 e2 amb =
@@ -636,7 +636,7 @@ let rec avalia_cmds amb comandos =
     and avalia_cmd amb cmd =
         match cmd.vcmd with
               CmdPrint (e) -> avalia_print (e.valor)
-            | CmdInput  (e,amb) -> avalia_input (e.valor) amb
+            | CmdInput  (e,amb) -> ignore()(* avalia_input (e.valor) amb *)
             | CmdIntParse _ (*e1, e2*) -> ignore() (*avalia_intparse e1 e2 amb*)
             | CmdAtrib (v,e) ->  avalia_atrib v e amb
             | CmdIf _ -> ignore()

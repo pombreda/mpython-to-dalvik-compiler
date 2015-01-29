@@ -106,6 +106,8 @@ and token  = parse
                         with Not_found -> ID (palavra)}
 | '"'                 { let buffer = Buffer.create 1 in
                         STRING (cadeia buffer lexbuf) }
+| '''                 { let buffer = Buffer.create 1 in
+                        STRING (cadeia2 buffer lexbuf) }
 | '='		          { ATRIB }
 | '+'                 { MAIS }
 | '-'                 { MENOS }
@@ -136,7 +138,6 @@ and token  = parse
 | ','		          { VIRG }
 | ';'		          { PTVIRG }
 | '.'		          { PTO }
-
 | _ as c              { failwith (msg_erro lexbuf c); }
 | eof                 { EOF }
 
@@ -148,4 +149,13 @@ and cadeia buffer = parse
  | '\\' '"'   { Buffer.add_char buffer '"';  cadeia buffer lexbuf }
  | '\\' '\\'  { Buffer.add_char buffer '\\'; cadeia buffer lexbuf }
  | _ as c     { Buffer.add_char buffer c;    cadeia buffer lexbuf }
+ | eof        { failwith "string não foi fechada" }
+
+and cadeia2 buffer = parse
+ | '''        { Buffer.contents buffer }
+ | "\\t"      { Buffer.add_char buffer '\t'; cadeia2 buffer lexbuf }
+ | "\\n"      { Buffer.add_char buffer '\n'; cadeia2 buffer lexbuf }
+ | '\\' '''   { Buffer.add_char buffer '"';  cadeia2 buffer lexbuf }
+ | '\\' '\\'  { Buffer.add_char buffer '\\'; cadeia2 buffer lexbuf }
+ | _ as c     { Buffer.add_char buffer c;    cadeia2 buffer lexbuf }
  | eof        { failwith "string não foi fechada" }

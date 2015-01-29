@@ -3,12 +3,12 @@
 #load "lexico.cmo";;
 #load "lexIndenta.cmo";;
 #load "semantico.cmo";;
-#load "interpretador.cmo";;
+(* #load "interpretador.cmo";; *)
 
 open Asa;;
 open Sintatico;;
 open Semantico;;
-open Interpretador;;
+(* open Interpretador;; *)
 open Printf;;
 open Filename;;
 
@@ -56,10 +56,10 @@ let sem_arq arq =
   let lexbuf = Lexing.from_string str in
   let asa = sintatico lexbuf in
   let amb = semantico asa in interpretador amb asa *)
-
+(*
 let interp arq =
   let lexbuf = Lexing.from_string arq in
   let arv = sintatico lexbuf in
   let tabSimb = semantico arv in
-    interpretador tabSimb arv
+    interpretador tabSimb arv *)
 
