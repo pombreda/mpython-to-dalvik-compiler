@@ -1,0 +1,4 @@
+let a = sem_arq "ex2.py" in
+let b = Hashtbl.find a "contador" in
+let d = match b with EntFn c -> c in
+Hashtbl.find d.varLocais "soma";;
