@@ -1,0 +1,1 @@
+print("O numero eh maior que 10")
