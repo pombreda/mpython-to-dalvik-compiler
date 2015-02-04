@@ -3,10 +3,10 @@
 (* Cria uma expressao onde v eh o valor da expressÃ£o e o eh a ordem na
 regra gramatical *)
 
-    let cria_exp o v =
-        { valor = v;
-           tipo = (Some TGen);
-           pos = Posicao.pos(o) }
+let cria_exp o v =
+    { valor = v;
+       tipo = None;
+       pos = Posicao.pos(o) }
 
 (* Cria um comando onde c eh o comando e o eh a ordem na regra gramatical *)
 let cria_cmd o c =
@@ -19,7 +19,7 @@ let cria_programa f c =
        cmdsP = c }
 (* Cria uma funcao onde o eh a ordem na regra gramatical, i eh o nome da funcao,
 p sao os parametros e c sao os comandos dentro da funcao. O tipo de retorno inicia como None *)
-let cria_funcao o t i p c =
+let cria_funcao o i p t c =
     { idF = i;
        paramsF = p;
        cmdsF = c;
@@ -28,7 +28,7 @@ let cria_funcao o t i p c =
        varLocaisF = Hashtbl.create 20 }
 (* Cria um parametro onde o eh a ordem na regra gramatical e i o nome (id) do parametro.
 O tipo do parametro inicia como TGen *)
-let cria_parametro o c i= (i, cria_ent_var c)
+let cria_parametro o i c = (i, cria_ent_var c)
 
 
 %}
@@ -71,8 +71,9 @@ funcoes:  { [] }
                 | funcoes funcao { $1 @ [ $2 ] }
                 ;
 /* define a estrutura de uma funcao e cria a funcao */
-funcao: DEF tipo ID APAR parametros FPAR DPONTOS NOVALINHA
-INDENTA comandos DEDENTA { cria_funcao 1 $2 $3 $5 $10 };
+funcao: DEF ID APAR parametros FPAR SETA tipo DPONTOS
+NOVALINHA INDENTA comandos DEDENTA
+{ cria_funcao 1 $2 $4 $7 $11 };
 /* define a estrutura de uma lista de funcoes e um parametro e cria o
 parametro */
 tipo:   INT_PARSE {Some TInt}
@@ -82,8 +83,8 @@ parametros: { [] }
                      | parametros parametro { $1 @ [ $2 ] }
                      ;
 /* um parametro pode estar seguido de virgula ou nao */
-parametro: tipo ID VIRG { cria_parametro 1 $1 $2 }
-                |  tipo ID { cria_parametro 1 $1 $2 };
+parametro:  ID DPONTOS tipo VIRG { cria_parametro 1 $1 $3 }
+                |   ID DPONTOS tipo { cria_parametro 1 $1 $3 };
 
 argumentos: { [] }
                     | argumentos argumento { $1 @ [ $2 ] }

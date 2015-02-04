@@ -1,0 +1,2786 @@
+   0  $accept : %entry% $end
+
+   1  programa : funcoes comandos
+
+   2  funcoes :
+   3          | funcoes funcao
+
+   4  funcao : DEF ID APAR parametros FPAR SETA tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA
+
+   5  tipo : INT_PARSE
+
+   6  parametros :
+   7             | parametros parametro
+
+   8  parametro : ID DPONTOS tipo VIRG
+   9            | ID DPONTOS tipo
+
+  10  argumentos :
+  11             | argumentos argumento
+
+  12  argumento : expressao VIRG
+  13            | expressao
+
+  14  cmd_chamada_func : ID APAR argumentos FPAR NOVALINHA
+  15                   | expressao ATRIB ID APAR argumentos FPAR NOVALINHA
+
+  16  comando : cmd_atrib
+  17          | cmd_if_else
+  18          | cmd_if
+  19          | cmd_while
+  20          | cmd_for
+  21          | cmd_range1
+  22          | cmd_range2
+  23          | cmd_range3
+  24          | cmd_atribMAIS
+  25          | cmd_atribMENOS
+  26          | cmd_atribVEZES
+  27          | cmd_atribDIV
+  28          | cmd_atribMOD
+  29          | cmd_chamada_func
+  30          | cmd_retorno
+  31          | cmd_print
+  32          | cmd_input
+  33          | cmd_int_parse
+
+  34  comandos :
+  35           | comandos comando
+
+  36  cmd_int_parse : expressao ATRIB INT_PARSE APAR expressao FPAR NOVALINHA
+
+  37  cmd_print : PRINT APAR expressao FPAR NOVALINHA
+
+  38  cmd_input : expressao ATRIB INPUT APAR expressao FPAR NOVALINHA
+
+  39  cmd_retorno : RETURN expressao NOVALINHA
+
+  40  cmd_atrib : expressao ATRIB expressao NOVALINHA
+
+  41  cmd_if : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA
+
+  42  cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA
+
+  43  cmd_while : WHILE expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA
+
+  44  cmd_for : FOR expressao IN comando DPONTOS NOVALINHA INDENTA comandos DEDENTA
+
+  45  cmd_range1 : RANGE APAR INT FPAR
+
+  46  cmd_range2 : RANGE APAR INT VIRG INT FPAR
+
+  47  cmd_range3 : RANGE APAR INT VIRG INT VIRG INT FPAR
+
+  48  cmd_atribMAIS : expressao ATRIBMAIS expressao
+
+  49  cmd_atribMENOS : expressao ATRIBMENOS expressao
+
+  50  cmd_atribVEZES : expressao ATRIBVEZES expressao
+
+  51  cmd_atribDIV : expressao ATRIBDIV expressao
+
+  52  cmd_atribMOD : expressao ATRIBMOD expressao
+
+  53  expressao : expressao AND expr1
+  54            | expressao OR expr1
+  55            | expr1
+
+  56  expr1 : expr1 MAIOR expr2
+  57        | expr1 MENOR expr2
+  58        | expr1 IGUAL expr2
+  59        | expr1 DIFERENTE expr2
+  60        | expr1 MAIORIGUAL expr2
+  61        | expr1 MENORIGUAL expr2
+  62        | expr1 MODULO expr2
+  63        | expr2
+
+  64  expr2 : expr2 MAIS expr3
+  65        | expr2 MENOS expr3
+  66        | expr3
+
+  67  expr3 : expr3 VEZES expr4
+  68        | expr3 DIVIDIDO expr4
+  69        | expr4
+
+  70  expr4 : NOT expr4
+  71        | expr5
+
+  72  expr5 : operando
+  73        | variavel
+  74        | APAR expressao FPAR
+
+  75  operando : INT
+  76           | FLOAT
+  77           | STRING
+  78           | BOOL
+
+  79  variavel : ID
+
+  80  %entry% : '\001' programa
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . programa  (80)
+	funcoes : .  (2)
+
+	.  reduce 2
+
+	programa  goto 3
+	funcoes  goto 4
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	%entry% : '\001' programa .  (80)
+
+	.  reduce 80
+
+
+state 4
+	programa : funcoes . comandos  (1)
+	funcoes : funcoes . funcao  (3)
+	comandos : .  (34)
+
+	DEF  shift 5
+	$end  reduce 34
+	INT  reduce 34
+	FLOAT  reduce 34
+	BOOL  reduce 34
+	ID  reduce 34
+	STRING  reduce 34
+	RETURN  reduce 34
+	APAR  reduce 34
+	IF  reduce 34
+	WHILE  reduce 34
+	FOR  reduce 34
+	RANGE  reduce 34
+	NOT  reduce 34
+	PRINT  reduce 34
+
+	comandos  goto 6
+	funcao  goto 7
+
+
+state 5
+	funcao : DEF . ID APAR parametros FPAR SETA tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA  (4)
+
+	ID  shift 8
+	.  error
+
+
+state 6
+	programa : funcoes comandos .  (1)
+	comandos : comandos . comando  (35)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 12
+	STRING  shift 13
+	RETURN  shift 14
+	APAR  shift 15
+	IF  shift 16
+	WHILE  shift 17
+	FOR  shift 18
+	RANGE  shift 19
+	NOT  shift 20
+	PRINT  shift 21
+	$end  reduce 1
+
+	expressao  goto 22
+	cmd_chamada_func  goto 23
+	comando  goto 24
+	cmd_atrib  goto 25
+	cmd_if_else  goto 26
+	cmd_if  goto 27
+	cmd_while  goto 28
+	cmd_for  goto 29
+	cmd_range1  goto 30
+	cmd_range2  goto 31
+	cmd_range3  goto 32
+	cmd_atribMAIS  goto 33
+	cmd_atribMENOS  goto 34
+	cmd_atribVEZES  goto 35
+	cmd_atribDIV  goto 36
+	cmd_atribMOD  goto 37
+	cmd_retorno  goto 38
+	cmd_print  goto 39
+	cmd_input  goto 40
+	cmd_int_parse  goto 41
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 7
+	funcoes : funcoes funcao .  (3)
+
+	.  reduce 3
+
+
+state 8
+	funcao : DEF ID . APAR parametros FPAR SETA tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA  (4)
+
+	APAR  shift 49
+	.  error
+
+
+state 9
+	operando : INT .  (75)
+
+	.  reduce 75
+
+
+state 10
+	operando : FLOAT .  (76)
+
+	.  reduce 76
+
+
+state 11
+	operando : BOOL .  (78)
+
+	.  reduce 78
+
+
+state 12
+	cmd_chamada_func : ID . APAR argumentos FPAR NOVALINHA  (14)
+	variavel : ID .  (79)
+
+	APAR  shift 50
+	AND  reduce 79
+	OR  reduce 79
+	ATRIB  reduce 79
+	MAIS  reduce 79
+	MENOS  reduce 79
+	VEZES  reduce 79
+	DIVIDIDO  reduce 79
+	MODULO  reduce 79
+	MAIOR  reduce 79
+	MENOR  reduce 79
+	IGUAL  reduce 79
+	DIFERENTE  reduce 79
+	MAIORIGUAL  reduce 79
+	MENORIGUAL  reduce 79
+	ATRIBMAIS  reduce 79
+	ATRIBMENOS  reduce 79
+	ATRIBVEZES  reduce 79
+	ATRIBDIV  reduce 79
+	ATRIBMOD  reduce 79
+
+
+state 13
+	operando : STRING .  (77)
+
+	.  reduce 77
+
+
+state 14
+	cmd_retorno : RETURN . expressao NOVALINHA  (39)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 52
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 15
+	expr5 : APAR . expressao FPAR  (74)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 53
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 16
+	cmd_if : IF . expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA  (41)
+	cmd_if_else : IF . expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 54
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 17
+	cmd_while : WHILE . expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA  (43)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 55
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 18
+	cmd_for : FOR . expressao IN comando DPONTOS NOVALINHA INDENTA comandos DEDENTA  (44)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 56
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 19
+	cmd_range1 : RANGE . APAR INT FPAR  (45)
+	cmd_range2 : RANGE . APAR INT VIRG INT FPAR  (46)
+	cmd_range3 : RANGE . APAR INT VIRG INT VIRG INT FPAR  (47)
+
+	APAR  shift 57
+	.  error
+
+
+state 20
+	expr4 : NOT . expr4  (70)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr4  goto 58
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 21
+	cmd_print : PRINT . APAR expressao FPAR NOVALINHA  (37)
+
+	APAR  shift 59
+	.  error
+
+
+state 22
+	cmd_chamada_func : expressao . ATRIB ID APAR argumentos FPAR NOVALINHA  (15)
+	cmd_int_parse : expressao . ATRIB INT_PARSE APAR expressao FPAR NOVALINHA  (36)
+	cmd_input : expressao . ATRIB INPUT APAR expressao FPAR NOVALINHA  (38)
+	cmd_atrib : expressao . ATRIB expressao NOVALINHA  (40)
+	cmd_atribMAIS : expressao . ATRIBMAIS expressao  (48)
+	cmd_atribMENOS : expressao . ATRIBMENOS expressao  (49)
+	cmd_atribVEZES : expressao . ATRIBVEZES expressao  (50)
+	cmd_atribDIV : expressao . ATRIBDIV expressao  (51)
+	cmd_atribMOD : expressao . ATRIBMOD expressao  (52)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	AND  shift 60
+	OR  shift 61
+	ATRIB  shift 62
+	ATRIBMAIS  shift 63
+	ATRIBMENOS  shift 64
+	ATRIBVEZES  shift 65
+	ATRIBDIV  shift 66
+	ATRIBMOD  shift 67
+	.  error
+
+
+state 23
+	comando : cmd_chamada_func .  (29)
+
+	.  reduce 29
+
+
+state 24
+	comandos : comandos comando .  (35)
+
+	.  reduce 35
+
+
+state 25
+	comando : cmd_atrib .  (16)
+
+	.  reduce 16
+
+
+state 26
+	comando : cmd_if_else .  (17)
+
+	.  reduce 17
+
+
+state 27
+	comando : cmd_if .  (18)
+
+	.  reduce 18
+
+
+state 28
+	comando : cmd_while .  (19)
+
+	.  reduce 19
+
+
+state 29
+	comando : cmd_for .  (20)
+
+	.  reduce 20
+
+
+state 30
+	comando : cmd_range1 .  (21)
+
+	.  reduce 21
+
+
+state 31
+	comando : cmd_range2 .  (22)
+
+	.  reduce 22
+
+
+state 32
+	comando : cmd_range3 .  (23)
+
+	.  reduce 23
+
+
+state 33
+	comando : cmd_atribMAIS .  (24)
+
+	.  reduce 24
+
+
+state 34
+	comando : cmd_atribMENOS .  (25)
+
+	.  reduce 25
+
+
+state 35
+	comando : cmd_atribVEZES .  (26)
+
+	.  reduce 26
+
+
+state 36
+	comando : cmd_atribDIV .  (27)
+
+	.  reduce 27
+
+
+state 37
+	comando : cmd_atribMOD .  (28)
+
+	.  reduce 28
+
+
+state 38
+	comando : cmd_retorno .  (30)
+
+	.  reduce 30
+
+
+state 39
+	comando : cmd_print .  (31)
+
+	.  reduce 31
+
+
+state 40
+	comando : cmd_input .  (32)
+
+	.  reduce 32
+
+
+state 41
+	comando : cmd_int_parse .  (33)
+
+	.  reduce 33
+
+
+state 42
+	expressao : expr1 .  (55)
+	expr1 : expr1 . MAIOR expr2  (56)
+	expr1 : expr1 . MENOR expr2  (57)
+	expr1 : expr1 . IGUAL expr2  (58)
+	expr1 : expr1 . DIFERENTE expr2  (59)
+	expr1 : expr1 . MAIORIGUAL expr2  (60)
+	expr1 : expr1 . MENORIGUAL expr2  (61)
+	expr1 : expr1 . MODULO expr2  (62)
+
+	MODULO  shift 68
+	MAIOR  shift 69
+	MENOR  shift 70
+	IGUAL  shift 71
+	DIFERENTE  shift 72
+	MAIORIGUAL  shift 73
+	MENORIGUAL  shift 74
+	$end  reduce 55
+	INT  reduce 55
+	FLOAT  reduce 55
+	BOOL  reduce 55
+	ID  reduce 55
+	STRING  reduce 55
+	DEDENTA  reduce 55
+	NOVALINHA  reduce 55
+	RETURN  reduce 55
+	APAR  reduce 55
+	FPAR  reduce 55
+	IF  reduce 55
+	WHILE  reduce 55
+	DPONTOS  reduce 55
+	FOR  reduce 55
+	IN  reduce 55
+	RANGE  reduce 55
+	VIRG  reduce 55
+	NOT  reduce 55
+	AND  reduce 55
+	OR  reduce 55
+	ATRIB  reduce 55
+	ATRIBMAIS  reduce 55
+	ATRIBMENOS  reduce 55
+	ATRIBVEZES  reduce 55
+	ATRIBDIV  reduce 55
+	ATRIBMOD  reduce 55
+	PRINT  reduce 55
+
+
+state 43
+	expr1 : expr2 .  (63)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 63
+	INT  reduce 63
+	FLOAT  reduce 63
+	BOOL  reduce 63
+	ID  reduce 63
+	STRING  reduce 63
+	DEDENTA  reduce 63
+	NOVALINHA  reduce 63
+	RETURN  reduce 63
+	APAR  reduce 63
+	FPAR  reduce 63
+	IF  reduce 63
+	WHILE  reduce 63
+	DPONTOS  reduce 63
+	FOR  reduce 63
+	IN  reduce 63
+	RANGE  reduce 63
+	VIRG  reduce 63
+	NOT  reduce 63
+	AND  reduce 63
+	OR  reduce 63
+	ATRIB  reduce 63
+	MODULO  reduce 63
+	MAIOR  reduce 63
+	MENOR  reduce 63
+	IGUAL  reduce 63
+	DIFERENTE  reduce 63
+	MAIORIGUAL  reduce 63
+	MENORIGUAL  reduce 63
+	ATRIBMAIS  reduce 63
+	ATRIBMENOS  reduce 63
+	ATRIBVEZES  reduce 63
+	ATRIBDIV  reduce 63
+	ATRIBMOD  reduce 63
+	PRINT  reduce 63
+
+
+state 44
+	expr2 : expr3 .  (66)
+	expr3 : expr3 . VEZES expr4  (67)
+	expr3 : expr3 . DIVIDIDO expr4  (68)
+
+	VEZES  shift 77
+	DIVIDIDO  shift 78
+	$end  reduce 66
+	INT  reduce 66
+	FLOAT  reduce 66
+	BOOL  reduce 66
+	ID  reduce 66
+	STRING  reduce 66
+	DEDENTA  reduce 66
+	NOVALINHA  reduce 66
+	RETURN  reduce 66
+	APAR  reduce 66
+	FPAR  reduce 66
+	IF  reduce 66
+	WHILE  reduce 66
+	DPONTOS  reduce 66
+	FOR  reduce 66
+	IN  reduce 66
+	RANGE  reduce 66
+	VIRG  reduce 66
+	NOT  reduce 66
+	AND  reduce 66
+	OR  reduce 66
+	ATRIB  reduce 66
+	MAIS  reduce 66
+	MENOS  reduce 66
+	MODULO  reduce 66
+	MAIOR  reduce 66
+	MENOR  reduce 66
+	IGUAL  reduce 66
+	DIFERENTE  reduce 66
+	MAIORIGUAL  reduce 66
+	MENORIGUAL  reduce 66
+	ATRIBMAIS  reduce 66
+	ATRIBMENOS  reduce 66
+	ATRIBVEZES  reduce 66
+	ATRIBDIV  reduce 66
+	ATRIBMOD  reduce 66
+	PRINT  reduce 66
+
+
+state 45
+	expr3 : expr4 .  (69)
+
+	.  reduce 69
+
+
+state 46
+	expr4 : expr5 .  (71)
+
+	.  reduce 71
+
+
+state 47
+	expr5 : operando .  (72)
+
+	.  reduce 72
+
+
+state 48
+	expr5 : variavel .  (73)
+
+	.  reduce 73
+
+
+state 49
+	funcao : DEF ID APAR . parametros FPAR SETA tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA  (4)
+	parametros : .  (6)
+
+	.  reduce 6
+
+	parametros  goto 79
+
+
+state 50
+	cmd_chamada_func : ID APAR . argumentos FPAR NOVALINHA  (14)
+	argumentos : .  (10)
+
+	.  reduce 10
+
+	argumentos  goto 80
+
+
+state 51
+	variavel : ID .  (79)
+
+	.  reduce 79
+
+
+state 52
+	cmd_retorno : RETURN expressao . NOVALINHA  (39)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	NOVALINHA  shift 81
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 53
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+	expr5 : APAR expressao . FPAR  (74)
+
+	FPAR  shift 82
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 54
+	cmd_if : IF expressao . DPONTOS NOVALINHA INDENTA comandos DEDENTA  (41)
+	cmd_if_else : IF expressao . DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	DPONTOS  shift 83
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 55
+	cmd_while : WHILE expressao . DPONTOS NOVALINHA INDENTA comandos DEDENTA  (43)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	DPONTOS  shift 84
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 56
+	cmd_for : FOR expressao . IN comando DPONTOS NOVALINHA INDENTA comandos DEDENTA  (44)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	IN  shift 85
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 57
+	cmd_range1 : RANGE APAR . INT FPAR  (45)
+	cmd_range2 : RANGE APAR . INT VIRG INT FPAR  (46)
+	cmd_range3 : RANGE APAR . INT VIRG INT VIRG INT FPAR  (47)
+
+	INT  shift 86
+	.  error
+
+
+state 58
+	expr4 : NOT expr4 .  (70)
+
+	.  reduce 70
+
+
+state 59
+	cmd_print : PRINT APAR . expressao FPAR NOVALINHA  (37)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 87
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 60
+	expressao : expressao AND . expr1  (53)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr1  goto 88
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 61
+	expressao : expressao OR . expr1  (54)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr1  goto 89
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 62
+	cmd_chamada_func : expressao ATRIB . ID APAR argumentos FPAR NOVALINHA  (15)
+	cmd_int_parse : expressao ATRIB . INT_PARSE APAR expressao FPAR NOVALINHA  (36)
+	cmd_input : expressao ATRIB . INPUT APAR expressao FPAR NOVALINHA  (38)
+	cmd_atrib : expressao ATRIB . expressao NOVALINHA  (40)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 90
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	INPUT  shift 91
+	INT_PARSE  shift 92
+	.  error
+
+	expressao  goto 93
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 63
+	cmd_atribMAIS : expressao ATRIBMAIS . expressao  (48)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 94
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 64
+	cmd_atribMENOS : expressao ATRIBMENOS . expressao  (49)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 95
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 65
+	cmd_atribVEZES : expressao ATRIBVEZES . expressao  (50)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 96
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 66
+	cmd_atribDIV : expressao ATRIBDIV . expressao  (51)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 97
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 67
+	cmd_atribMOD : expressao ATRIBMOD . expressao  (52)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 98
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 68
+	expr1 : expr1 MODULO . expr2  (62)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr2  goto 99
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 69
+	expr1 : expr1 MAIOR . expr2  (56)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr2  goto 100
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 70
+	expr1 : expr1 MENOR . expr2  (57)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr2  goto 101
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 71
+	expr1 : expr1 IGUAL . expr2  (58)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr2  goto 102
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 72
+	expr1 : expr1 DIFERENTE . expr2  (59)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr2  goto 103
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 73
+	expr1 : expr1 MAIORIGUAL . expr2  (60)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr2  goto 104
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 74
+	expr1 : expr1 MENORIGUAL . expr2  (61)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr2  goto 105
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 75
+	expr2 : expr2 MAIS . expr3  (64)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr3  goto 106
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 76
+	expr2 : expr2 MENOS . expr3  (65)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr3  goto 107
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 77
+	expr3 : expr3 VEZES . expr4  (67)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr4  goto 108
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 78
+	expr3 : expr3 DIVIDIDO . expr4  (68)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expr4  goto 109
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 79
+	funcao : DEF ID APAR parametros . FPAR SETA tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA  (4)
+	parametros : parametros . parametro  (7)
+
+	ID  shift 110
+	FPAR  shift 111
+	.  error
+
+	parametro  goto 112
+
+
+state 80
+	argumentos : argumentos . argumento  (11)
+	cmd_chamada_func : ID APAR argumentos . FPAR NOVALINHA  (14)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	FPAR  shift 113
+	NOT  shift 20
+	.  error
+
+	argumento  goto 114
+	expressao  goto 115
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 81
+	cmd_retorno : RETURN expressao NOVALINHA .  (39)
+
+	.  reduce 39
+
+
+state 82
+	expr5 : APAR expressao FPAR .  (74)
+
+	.  reduce 74
+
+
+state 83
+	cmd_if : IF expressao DPONTOS . NOVALINHA INDENTA comandos DEDENTA  (41)
+	cmd_if_else : IF expressao DPONTOS . NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+
+	NOVALINHA  shift 116
+	.  error
+
+
+state 84
+	cmd_while : WHILE expressao DPONTOS . NOVALINHA INDENTA comandos DEDENTA  (43)
+
+	NOVALINHA  shift 117
+	.  error
+
+
+state 85
+	cmd_for : FOR expressao IN . comando DPONTOS NOVALINHA INDENTA comandos DEDENTA  (44)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 12
+	STRING  shift 13
+	RETURN  shift 14
+	APAR  shift 15
+	IF  shift 16
+	WHILE  shift 17
+	FOR  shift 18
+	RANGE  shift 19
+	NOT  shift 20
+	PRINT  shift 21
+	.  error
+
+	expressao  goto 22
+	cmd_chamada_func  goto 23
+	comando  goto 118
+	cmd_atrib  goto 25
+	cmd_if_else  goto 26
+	cmd_if  goto 27
+	cmd_while  goto 28
+	cmd_for  goto 29
+	cmd_range1  goto 30
+	cmd_range2  goto 31
+	cmd_range3  goto 32
+	cmd_atribMAIS  goto 33
+	cmd_atribMENOS  goto 34
+	cmd_atribVEZES  goto 35
+	cmd_atribDIV  goto 36
+	cmd_atribMOD  goto 37
+	cmd_retorno  goto 38
+	cmd_print  goto 39
+	cmd_input  goto 40
+	cmd_int_parse  goto 41
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 86
+	cmd_range1 : RANGE APAR INT . FPAR  (45)
+	cmd_range2 : RANGE APAR INT . VIRG INT FPAR  (46)
+	cmd_range3 : RANGE APAR INT . VIRG INT VIRG INT FPAR  (47)
+
+	FPAR  shift 119
+	VIRG  shift 120
+	.  error
+
+
+state 87
+	cmd_print : PRINT APAR expressao . FPAR NOVALINHA  (37)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	FPAR  shift 121
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 88
+	expressao : expressao AND expr1 .  (53)
+	expr1 : expr1 . MAIOR expr2  (56)
+	expr1 : expr1 . MENOR expr2  (57)
+	expr1 : expr1 . IGUAL expr2  (58)
+	expr1 : expr1 . DIFERENTE expr2  (59)
+	expr1 : expr1 . MAIORIGUAL expr2  (60)
+	expr1 : expr1 . MENORIGUAL expr2  (61)
+	expr1 : expr1 . MODULO expr2  (62)
+
+	MODULO  shift 68
+	MAIOR  shift 69
+	MENOR  shift 70
+	IGUAL  shift 71
+	DIFERENTE  shift 72
+	MAIORIGUAL  shift 73
+	MENORIGUAL  shift 74
+	$end  reduce 53
+	INT  reduce 53
+	FLOAT  reduce 53
+	BOOL  reduce 53
+	ID  reduce 53
+	STRING  reduce 53
+	DEDENTA  reduce 53
+	NOVALINHA  reduce 53
+	RETURN  reduce 53
+	APAR  reduce 53
+	FPAR  reduce 53
+	IF  reduce 53
+	WHILE  reduce 53
+	DPONTOS  reduce 53
+	FOR  reduce 53
+	IN  reduce 53
+	RANGE  reduce 53
+	VIRG  reduce 53
+	NOT  reduce 53
+	AND  reduce 53
+	OR  reduce 53
+	ATRIB  reduce 53
+	ATRIBMAIS  reduce 53
+	ATRIBMENOS  reduce 53
+	ATRIBVEZES  reduce 53
+	ATRIBDIV  reduce 53
+	ATRIBMOD  reduce 53
+	PRINT  reduce 53
+
+
+state 89
+	expressao : expressao OR expr1 .  (54)
+	expr1 : expr1 . MAIOR expr2  (56)
+	expr1 : expr1 . MENOR expr2  (57)
+	expr1 : expr1 . IGUAL expr2  (58)
+	expr1 : expr1 . DIFERENTE expr2  (59)
+	expr1 : expr1 . MAIORIGUAL expr2  (60)
+	expr1 : expr1 . MENORIGUAL expr2  (61)
+	expr1 : expr1 . MODULO expr2  (62)
+
+	MODULO  shift 68
+	MAIOR  shift 69
+	MENOR  shift 70
+	IGUAL  shift 71
+	DIFERENTE  shift 72
+	MAIORIGUAL  shift 73
+	MENORIGUAL  shift 74
+	$end  reduce 54
+	INT  reduce 54
+	FLOAT  reduce 54
+	BOOL  reduce 54
+	ID  reduce 54
+	STRING  reduce 54
+	DEDENTA  reduce 54
+	NOVALINHA  reduce 54
+	RETURN  reduce 54
+	APAR  reduce 54
+	FPAR  reduce 54
+	IF  reduce 54
+	WHILE  reduce 54
+	DPONTOS  reduce 54
+	FOR  reduce 54
+	IN  reduce 54
+	RANGE  reduce 54
+	VIRG  reduce 54
+	NOT  reduce 54
+	AND  reduce 54
+	OR  reduce 54
+	ATRIB  reduce 54
+	ATRIBMAIS  reduce 54
+	ATRIBMENOS  reduce 54
+	ATRIBVEZES  reduce 54
+	ATRIBDIV  reduce 54
+	ATRIBMOD  reduce 54
+	PRINT  reduce 54
+
+
+state 90
+	cmd_chamada_func : expressao ATRIB ID . APAR argumentos FPAR NOVALINHA  (15)
+	variavel : ID .  (79)
+
+	APAR  shift 122
+	NOVALINHA  reduce 79
+	AND  reduce 79
+	OR  reduce 79
+	MAIS  reduce 79
+	MENOS  reduce 79
+	VEZES  reduce 79
+	DIVIDIDO  reduce 79
+	MODULO  reduce 79
+	MAIOR  reduce 79
+	MENOR  reduce 79
+	IGUAL  reduce 79
+	DIFERENTE  reduce 79
+	MAIORIGUAL  reduce 79
+	MENORIGUAL  reduce 79
+
+
+state 91
+	cmd_input : expressao ATRIB INPUT . APAR expressao FPAR NOVALINHA  (38)
+
+	APAR  shift 123
+	.  error
+
+
+state 92
+	cmd_int_parse : expressao ATRIB INT_PARSE . APAR expressao FPAR NOVALINHA  (36)
+
+	APAR  shift 124
+	.  error
+
+
+state 93
+	cmd_atrib : expressao ATRIB expressao . NOVALINHA  (40)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	NOVALINHA  shift 125
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 94
+	cmd_atribMAIS : expressao ATRIBMAIS expressao .  (48)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	AND  shift 60
+	OR  shift 61
+	$end  reduce 48
+	INT  reduce 48
+	FLOAT  reduce 48
+	BOOL  reduce 48
+	ID  reduce 48
+	STRING  reduce 48
+	DEDENTA  reduce 48
+	RETURN  reduce 48
+	APAR  reduce 48
+	IF  reduce 48
+	WHILE  reduce 48
+	DPONTOS  reduce 48
+	FOR  reduce 48
+	RANGE  reduce 48
+	NOT  reduce 48
+	PRINT  reduce 48
+
+
+state 95
+	cmd_atribMENOS : expressao ATRIBMENOS expressao .  (49)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	AND  shift 60
+	OR  shift 61
+	$end  reduce 49
+	INT  reduce 49
+	FLOAT  reduce 49
+	BOOL  reduce 49
+	ID  reduce 49
+	STRING  reduce 49
+	DEDENTA  reduce 49
+	RETURN  reduce 49
+	APAR  reduce 49
+	IF  reduce 49
+	WHILE  reduce 49
+	DPONTOS  reduce 49
+	FOR  reduce 49
+	RANGE  reduce 49
+	NOT  reduce 49
+	PRINT  reduce 49
+
+
+state 96
+	cmd_atribVEZES : expressao ATRIBVEZES expressao .  (50)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	AND  shift 60
+	OR  shift 61
+	$end  reduce 50
+	INT  reduce 50
+	FLOAT  reduce 50
+	BOOL  reduce 50
+	ID  reduce 50
+	STRING  reduce 50
+	DEDENTA  reduce 50
+	RETURN  reduce 50
+	APAR  reduce 50
+	IF  reduce 50
+	WHILE  reduce 50
+	DPONTOS  reduce 50
+	FOR  reduce 50
+	RANGE  reduce 50
+	NOT  reduce 50
+	PRINT  reduce 50
+
+
+state 97
+	cmd_atribDIV : expressao ATRIBDIV expressao .  (51)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	AND  shift 60
+	OR  shift 61
+	$end  reduce 51
+	INT  reduce 51
+	FLOAT  reduce 51
+	BOOL  reduce 51
+	ID  reduce 51
+	STRING  reduce 51
+	DEDENTA  reduce 51
+	RETURN  reduce 51
+	APAR  reduce 51
+	IF  reduce 51
+	WHILE  reduce 51
+	DPONTOS  reduce 51
+	FOR  reduce 51
+	RANGE  reduce 51
+	NOT  reduce 51
+	PRINT  reduce 51
+
+
+state 98
+	cmd_atribMOD : expressao ATRIBMOD expressao .  (52)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	AND  shift 60
+	OR  shift 61
+	$end  reduce 52
+	INT  reduce 52
+	FLOAT  reduce 52
+	BOOL  reduce 52
+	ID  reduce 52
+	STRING  reduce 52
+	DEDENTA  reduce 52
+	RETURN  reduce 52
+	APAR  reduce 52
+	IF  reduce 52
+	WHILE  reduce 52
+	DPONTOS  reduce 52
+	FOR  reduce 52
+	RANGE  reduce 52
+	NOT  reduce 52
+	PRINT  reduce 52
+
+
+state 99
+	expr1 : expr1 MODULO expr2 .  (62)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 62
+	INT  reduce 62
+	FLOAT  reduce 62
+	BOOL  reduce 62
+	ID  reduce 62
+	STRING  reduce 62
+	DEDENTA  reduce 62
+	NOVALINHA  reduce 62
+	RETURN  reduce 62
+	APAR  reduce 62
+	FPAR  reduce 62
+	IF  reduce 62
+	WHILE  reduce 62
+	DPONTOS  reduce 62
+	FOR  reduce 62
+	IN  reduce 62
+	RANGE  reduce 62
+	VIRG  reduce 62
+	NOT  reduce 62
+	AND  reduce 62
+	OR  reduce 62
+	ATRIB  reduce 62
+	MODULO  reduce 62
+	MAIOR  reduce 62
+	MENOR  reduce 62
+	IGUAL  reduce 62
+	DIFERENTE  reduce 62
+	MAIORIGUAL  reduce 62
+	MENORIGUAL  reduce 62
+	ATRIBMAIS  reduce 62
+	ATRIBMENOS  reduce 62
+	ATRIBVEZES  reduce 62
+	ATRIBDIV  reduce 62
+	ATRIBMOD  reduce 62
+	PRINT  reduce 62
+
+
+state 100
+	expr1 : expr1 MAIOR expr2 .  (56)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 56
+	INT  reduce 56
+	FLOAT  reduce 56
+	BOOL  reduce 56
+	ID  reduce 56
+	STRING  reduce 56
+	DEDENTA  reduce 56
+	NOVALINHA  reduce 56
+	RETURN  reduce 56
+	APAR  reduce 56
+	FPAR  reduce 56
+	IF  reduce 56
+	WHILE  reduce 56
+	DPONTOS  reduce 56
+	FOR  reduce 56
+	IN  reduce 56
+	RANGE  reduce 56
+	VIRG  reduce 56
+	NOT  reduce 56
+	AND  reduce 56
+	OR  reduce 56
+	ATRIB  reduce 56
+	MODULO  reduce 56
+	MAIOR  reduce 56
+	MENOR  reduce 56
+	IGUAL  reduce 56
+	DIFERENTE  reduce 56
+	MAIORIGUAL  reduce 56
+	MENORIGUAL  reduce 56
+	ATRIBMAIS  reduce 56
+	ATRIBMENOS  reduce 56
+	ATRIBVEZES  reduce 56
+	ATRIBDIV  reduce 56
+	ATRIBMOD  reduce 56
+	PRINT  reduce 56
+
+
+state 101
+	expr1 : expr1 MENOR expr2 .  (57)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 57
+	INT  reduce 57
+	FLOAT  reduce 57
+	BOOL  reduce 57
+	ID  reduce 57
+	STRING  reduce 57
+	DEDENTA  reduce 57
+	NOVALINHA  reduce 57
+	RETURN  reduce 57
+	APAR  reduce 57
+	FPAR  reduce 57
+	IF  reduce 57
+	WHILE  reduce 57
+	DPONTOS  reduce 57
+	FOR  reduce 57
+	IN  reduce 57
+	RANGE  reduce 57
+	VIRG  reduce 57
+	NOT  reduce 57
+	AND  reduce 57
+	OR  reduce 57
+	ATRIB  reduce 57
+	MODULO  reduce 57
+	MAIOR  reduce 57
+	MENOR  reduce 57
+	IGUAL  reduce 57
+	DIFERENTE  reduce 57
+	MAIORIGUAL  reduce 57
+	MENORIGUAL  reduce 57
+	ATRIBMAIS  reduce 57
+	ATRIBMENOS  reduce 57
+	ATRIBVEZES  reduce 57
+	ATRIBDIV  reduce 57
+	ATRIBMOD  reduce 57
+	PRINT  reduce 57
+
+
+state 102
+	expr1 : expr1 IGUAL expr2 .  (58)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 58
+	INT  reduce 58
+	FLOAT  reduce 58
+	BOOL  reduce 58
+	ID  reduce 58
+	STRING  reduce 58
+	DEDENTA  reduce 58
+	NOVALINHA  reduce 58
+	RETURN  reduce 58
+	APAR  reduce 58
+	FPAR  reduce 58
+	IF  reduce 58
+	WHILE  reduce 58
+	DPONTOS  reduce 58
+	FOR  reduce 58
+	IN  reduce 58
+	RANGE  reduce 58
+	VIRG  reduce 58
+	NOT  reduce 58
+	AND  reduce 58
+	OR  reduce 58
+	ATRIB  reduce 58
+	MODULO  reduce 58
+	MAIOR  reduce 58
+	MENOR  reduce 58
+	IGUAL  reduce 58
+	DIFERENTE  reduce 58
+	MAIORIGUAL  reduce 58
+	MENORIGUAL  reduce 58
+	ATRIBMAIS  reduce 58
+	ATRIBMENOS  reduce 58
+	ATRIBVEZES  reduce 58
+	ATRIBDIV  reduce 58
+	ATRIBMOD  reduce 58
+	PRINT  reduce 58
+
+
+state 103
+	expr1 : expr1 DIFERENTE expr2 .  (59)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 59
+	INT  reduce 59
+	FLOAT  reduce 59
+	BOOL  reduce 59
+	ID  reduce 59
+	STRING  reduce 59
+	DEDENTA  reduce 59
+	NOVALINHA  reduce 59
+	RETURN  reduce 59
+	APAR  reduce 59
+	FPAR  reduce 59
+	IF  reduce 59
+	WHILE  reduce 59
+	DPONTOS  reduce 59
+	FOR  reduce 59
+	IN  reduce 59
+	RANGE  reduce 59
+	VIRG  reduce 59
+	NOT  reduce 59
+	AND  reduce 59
+	OR  reduce 59
+	ATRIB  reduce 59
+	MODULO  reduce 59
+	MAIOR  reduce 59
+	MENOR  reduce 59
+	IGUAL  reduce 59
+	DIFERENTE  reduce 59
+	MAIORIGUAL  reduce 59
+	MENORIGUAL  reduce 59
+	ATRIBMAIS  reduce 59
+	ATRIBMENOS  reduce 59
+	ATRIBVEZES  reduce 59
+	ATRIBDIV  reduce 59
+	ATRIBMOD  reduce 59
+	PRINT  reduce 59
+
+
+state 104
+	expr1 : expr1 MAIORIGUAL expr2 .  (60)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 60
+	INT  reduce 60
+	FLOAT  reduce 60
+	BOOL  reduce 60
+	ID  reduce 60
+	STRING  reduce 60
+	DEDENTA  reduce 60
+	NOVALINHA  reduce 60
+	RETURN  reduce 60
+	APAR  reduce 60
+	FPAR  reduce 60
+	IF  reduce 60
+	WHILE  reduce 60
+	DPONTOS  reduce 60
+	FOR  reduce 60
+	IN  reduce 60
+	RANGE  reduce 60
+	VIRG  reduce 60
+	NOT  reduce 60
+	AND  reduce 60
+	OR  reduce 60
+	ATRIB  reduce 60
+	MODULO  reduce 60
+	MAIOR  reduce 60
+	MENOR  reduce 60
+	IGUAL  reduce 60
+	DIFERENTE  reduce 60
+	MAIORIGUAL  reduce 60
+	MENORIGUAL  reduce 60
+	ATRIBMAIS  reduce 60
+	ATRIBMENOS  reduce 60
+	ATRIBVEZES  reduce 60
+	ATRIBDIV  reduce 60
+	ATRIBMOD  reduce 60
+	PRINT  reduce 60
+
+
+state 105
+	expr1 : expr1 MENORIGUAL expr2 .  (61)
+	expr2 : expr2 . MAIS expr3  (64)
+	expr2 : expr2 . MENOS expr3  (65)
+
+	MAIS  shift 75
+	MENOS  shift 76
+	$end  reduce 61
+	INT  reduce 61
+	FLOAT  reduce 61
+	BOOL  reduce 61
+	ID  reduce 61
+	STRING  reduce 61
+	DEDENTA  reduce 61
+	NOVALINHA  reduce 61
+	RETURN  reduce 61
+	APAR  reduce 61
+	FPAR  reduce 61
+	IF  reduce 61
+	WHILE  reduce 61
+	DPONTOS  reduce 61
+	FOR  reduce 61
+	IN  reduce 61
+	RANGE  reduce 61
+	VIRG  reduce 61
+	NOT  reduce 61
+	AND  reduce 61
+	OR  reduce 61
+	ATRIB  reduce 61
+	MODULO  reduce 61
+	MAIOR  reduce 61
+	MENOR  reduce 61
+	IGUAL  reduce 61
+	DIFERENTE  reduce 61
+	MAIORIGUAL  reduce 61
+	MENORIGUAL  reduce 61
+	ATRIBMAIS  reduce 61
+	ATRIBMENOS  reduce 61
+	ATRIBVEZES  reduce 61
+	ATRIBDIV  reduce 61
+	ATRIBMOD  reduce 61
+	PRINT  reduce 61
+
+
+state 106
+	expr2 : expr2 MAIS expr3 .  (64)
+	expr3 : expr3 . VEZES expr4  (67)
+	expr3 : expr3 . DIVIDIDO expr4  (68)
+
+	VEZES  shift 77
+	DIVIDIDO  shift 78
+	$end  reduce 64
+	INT  reduce 64
+	FLOAT  reduce 64
+	BOOL  reduce 64
+	ID  reduce 64
+	STRING  reduce 64
+	DEDENTA  reduce 64
+	NOVALINHA  reduce 64
+	RETURN  reduce 64
+	APAR  reduce 64
+	FPAR  reduce 64
+	IF  reduce 64
+	WHILE  reduce 64
+	DPONTOS  reduce 64
+	FOR  reduce 64
+	IN  reduce 64
+	RANGE  reduce 64
+	VIRG  reduce 64
+	NOT  reduce 64
+	AND  reduce 64
+	OR  reduce 64
+	ATRIB  reduce 64
+	MAIS  reduce 64
+	MENOS  reduce 64
+	MODULO  reduce 64
+	MAIOR  reduce 64
+	MENOR  reduce 64
+	IGUAL  reduce 64
+	DIFERENTE  reduce 64
+	MAIORIGUAL  reduce 64
+	MENORIGUAL  reduce 64
+	ATRIBMAIS  reduce 64
+	ATRIBMENOS  reduce 64
+	ATRIBVEZES  reduce 64
+	ATRIBDIV  reduce 64
+	ATRIBMOD  reduce 64
+	PRINT  reduce 64
+
+
+state 107
+	expr2 : expr2 MENOS expr3 .  (65)
+	expr3 : expr3 . VEZES expr4  (67)
+	expr3 : expr3 . DIVIDIDO expr4  (68)
+
+	VEZES  shift 77
+	DIVIDIDO  shift 78
+	$end  reduce 65
+	INT  reduce 65
+	FLOAT  reduce 65
+	BOOL  reduce 65
+	ID  reduce 65
+	STRING  reduce 65
+	DEDENTA  reduce 65
+	NOVALINHA  reduce 65
+	RETURN  reduce 65
+	APAR  reduce 65
+	FPAR  reduce 65
+	IF  reduce 65
+	WHILE  reduce 65
+	DPONTOS  reduce 65
+	FOR  reduce 65
+	IN  reduce 65
+	RANGE  reduce 65
+	VIRG  reduce 65
+	NOT  reduce 65
+	AND  reduce 65
+	OR  reduce 65
+	ATRIB  reduce 65
+	MAIS  reduce 65
+	MENOS  reduce 65
+	MODULO  reduce 65
+	MAIOR  reduce 65
+	MENOR  reduce 65
+	IGUAL  reduce 65
+	DIFERENTE  reduce 65
+	MAIORIGUAL  reduce 65
+	MENORIGUAL  reduce 65
+	ATRIBMAIS  reduce 65
+	ATRIBMENOS  reduce 65
+	ATRIBVEZES  reduce 65
+	ATRIBDIV  reduce 65
+	ATRIBMOD  reduce 65
+	PRINT  reduce 65
+
+
+state 108
+	expr3 : expr3 VEZES expr4 .  (67)
+
+	.  reduce 67
+
+
+state 109
+	expr3 : expr3 DIVIDIDO expr4 .  (68)
+
+	.  reduce 68
+
+
+state 110
+	parametro : ID . DPONTOS tipo VIRG  (8)
+	parametro : ID . DPONTOS tipo  (9)
+
+	DPONTOS  shift 126
+	.  error
+
+
+state 111
+	funcao : DEF ID APAR parametros FPAR . SETA tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA  (4)
+
+	SETA  shift 127
+	.  error
+
+
+state 112
+	parametros : parametros parametro .  (7)
+
+	.  reduce 7
+
+
+state 113
+	cmd_chamada_func : ID APAR argumentos FPAR . NOVALINHA  (14)
+
+	NOVALINHA  shift 128
+	.  error
+
+
+state 114
+	argumentos : argumentos argumento .  (11)
+
+	.  reduce 11
+
+
+state 115
+	argumento : expressao . VIRG  (12)
+	argumento : expressao .  (13)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	VIRG  shift 129
+	AND  shift 60
+	OR  shift 61
+	INT  reduce 13
+	FLOAT  reduce 13
+	BOOL  reduce 13
+	ID  reduce 13
+	STRING  reduce 13
+	APAR  reduce 13
+	FPAR  reduce 13
+	NOT  reduce 13
+
+
+state 116
+	cmd_if : IF expressao DPONTOS NOVALINHA . INDENTA comandos DEDENTA  (41)
+	cmd_if_else : IF expressao DPONTOS NOVALINHA . INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+
+	INDENTA  shift 130
+	.  error
+
+
+state 117
+	cmd_while : WHILE expressao DPONTOS NOVALINHA . INDENTA comandos DEDENTA  (43)
+
+	INDENTA  shift 131
+	.  error
+
+
+state 118
+	cmd_for : FOR expressao IN comando . DPONTOS NOVALINHA INDENTA comandos DEDENTA  (44)
+
+	DPONTOS  shift 132
+	.  error
+
+
+state 119
+	cmd_range1 : RANGE APAR INT FPAR .  (45)
+
+	.  reduce 45
+
+
+state 120
+	cmd_range2 : RANGE APAR INT VIRG . INT FPAR  (46)
+	cmd_range3 : RANGE APAR INT VIRG . INT VIRG INT FPAR  (47)
+
+	INT  shift 133
+	.  error
+
+
+state 121
+	cmd_print : PRINT APAR expressao FPAR . NOVALINHA  (37)
+
+	NOVALINHA  shift 134
+	.  error
+
+
+state 122
+	cmd_chamada_func : expressao ATRIB ID APAR . argumentos FPAR NOVALINHA  (15)
+	argumentos : .  (10)
+
+	.  reduce 10
+
+	argumentos  goto 135
+
+
+state 123
+	cmd_input : expressao ATRIB INPUT APAR . expressao FPAR NOVALINHA  (38)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 136
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 124
+	cmd_int_parse : expressao ATRIB INT_PARSE APAR . expressao FPAR NOVALINHA  (36)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	NOT  shift 20
+	.  error
+
+	expressao  goto 137
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 125
+	cmd_atrib : expressao ATRIB expressao NOVALINHA .  (40)
+
+	.  reduce 40
+
+
+state 126
+	parametro : ID DPONTOS . tipo VIRG  (8)
+	parametro : ID DPONTOS . tipo  (9)
+
+	INT_PARSE  shift 138
+	.  error
+
+	tipo  goto 139
+
+
+state 127
+	funcao : DEF ID APAR parametros FPAR SETA . tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA  (4)
+
+	INT_PARSE  shift 138
+	.  error
+
+	tipo  goto 140
+
+
+state 128
+	cmd_chamada_func : ID APAR argumentos FPAR NOVALINHA .  (14)
+
+	.  reduce 14
+
+
+state 129
+	argumento : expressao VIRG .  (12)
+
+	.  reduce 12
+
+
+state 130
+	cmd_if : IF expressao DPONTOS NOVALINHA INDENTA . comandos DEDENTA  (41)
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA . comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+	comandos : .  (34)
+
+	.  reduce 34
+
+	comandos  goto 141
+
+
+state 131
+	cmd_while : WHILE expressao DPONTOS NOVALINHA INDENTA . comandos DEDENTA  (43)
+	comandos : .  (34)
+
+	.  reduce 34
+
+	comandos  goto 142
+
+
+state 132
+	cmd_for : FOR expressao IN comando DPONTOS . NOVALINHA INDENTA comandos DEDENTA  (44)
+
+	NOVALINHA  shift 143
+	.  error
+
+
+state 133
+	cmd_range2 : RANGE APAR INT VIRG INT . FPAR  (46)
+	cmd_range3 : RANGE APAR INT VIRG INT . VIRG INT FPAR  (47)
+
+	FPAR  shift 144
+	VIRG  shift 145
+	.  error
+
+
+state 134
+	cmd_print : PRINT APAR expressao FPAR NOVALINHA .  (37)
+
+	.  reduce 37
+
+
+state 135
+	argumentos : argumentos . argumento  (11)
+	cmd_chamada_func : expressao ATRIB ID APAR argumentos . FPAR NOVALINHA  (15)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 51
+	STRING  shift 13
+	APAR  shift 15
+	FPAR  shift 146
+	NOT  shift 20
+	.  error
+
+	argumento  goto 114
+	expressao  goto 115
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 136
+	cmd_input : expressao ATRIB INPUT APAR expressao . FPAR NOVALINHA  (38)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	FPAR  shift 147
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 137
+	cmd_int_parse : expressao ATRIB INT_PARSE APAR expressao . FPAR NOVALINHA  (36)
+	expressao : expressao . AND expr1  (53)
+	expressao : expressao . OR expr1  (54)
+
+	FPAR  shift 148
+	AND  shift 60
+	OR  shift 61
+	.  error
+
+
+state 138
+	tipo : INT_PARSE .  (5)
+
+	.  reduce 5
+
+
+state 139
+	parametro : ID DPONTOS tipo . VIRG  (8)
+	parametro : ID DPONTOS tipo .  (9)
+
+	VIRG  shift 149
+	ID  reduce 9
+	FPAR  reduce 9
+
+
+state 140
+	funcao : DEF ID APAR parametros FPAR SETA tipo . DPONTOS NOVALINHA INDENTA comandos DEDENTA  (4)
+
+	DPONTOS  shift 150
+	.  error
+
+
+state 141
+	comandos : comandos . comando  (35)
+	cmd_if : IF expressao DPONTOS NOVALINHA INDENTA comandos . DEDENTA  (41)
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos . DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 12
+	STRING  shift 13
+	DEDENTA  shift 151
+	RETURN  shift 14
+	APAR  shift 15
+	IF  shift 16
+	WHILE  shift 17
+	FOR  shift 18
+	RANGE  shift 19
+	NOT  shift 20
+	PRINT  shift 21
+	.  error
+
+	expressao  goto 22
+	cmd_chamada_func  goto 23
+	comando  goto 24
+	cmd_atrib  goto 25
+	cmd_if_else  goto 26
+	cmd_if  goto 27
+	cmd_while  goto 28
+	cmd_for  goto 29
+	cmd_range1  goto 30
+	cmd_range2  goto 31
+	cmd_range3  goto 32
+	cmd_atribMAIS  goto 33
+	cmd_atribMENOS  goto 34
+	cmd_atribVEZES  goto 35
+	cmd_atribDIV  goto 36
+	cmd_atribMOD  goto 37
+	cmd_retorno  goto 38
+	cmd_print  goto 39
+	cmd_input  goto 40
+	cmd_int_parse  goto 41
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 142
+	comandos : comandos . comando  (35)
+	cmd_while : WHILE expressao DPONTOS NOVALINHA INDENTA comandos . DEDENTA  (43)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 12
+	STRING  shift 13
+	DEDENTA  shift 152
+	RETURN  shift 14
+	APAR  shift 15
+	IF  shift 16
+	WHILE  shift 17
+	FOR  shift 18
+	RANGE  shift 19
+	NOT  shift 20
+	PRINT  shift 21
+	.  error
+
+	expressao  goto 22
+	cmd_chamada_func  goto 23
+	comando  goto 24
+	cmd_atrib  goto 25
+	cmd_if_else  goto 26
+	cmd_if  goto 27
+	cmd_while  goto 28
+	cmd_for  goto 29
+	cmd_range1  goto 30
+	cmd_range2  goto 31
+	cmd_range3  goto 32
+	cmd_atribMAIS  goto 33
+	cmd_atribMENOS  goto 34
+	cmd_atribVEZES  goto 35
+	cmd_atribDIV  goto 36
+	cmd_atribMOD  goto 37
+	cmd_retorno  goto 38
+	cmd_print  goto 39
+	cmd_input  goto 40
+	cmd_int_parse  goto 41
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 143
+	cmd_for : FOR expressao IN comando DPONTOS NOVALINHA . INDENTA comandos DEDENTA  (44)
+
+	INDENTA  shift 153
+	.  error
+
+
+state 144
+	cmd_range2 : RANGE APAR INT VIRG INT FPAR .  (46)
+
+	.  reduce 46
+
+
+state 145
+	cmd_range3 : RANGE APAR INT VIRG INT VIRG . INT FPAR  (47)
+
+	INT  shift 154
+	.  error
+
+
+state 146
+	cmd_chamada_func : expressao ATRIB ID APAR argumentos FPAR . NOVALINHA  (15)
+
+	NOVALINHA  shift 155
+	.  error
+
+
+state 147
+	cmd_input : expressao ATRIB INPUT APAR expressao FPAR . NOVALINHA  (38)
+
+	NOVALINHA  shift 156
+	.  error
+
+
+state 148
+	cmd_int_parse : expressao ATRIB INT_PARSE APAR expressao FPAR . NOVALINHA  (36)
+
+	NOVALINHA  shift 157
+	.  error
+
+
+state 149
+	parametro : ID DPONTOS tipo VIRG .  (8)
+
+	.  reduce 8
+
+
+state 150
+	funcao : DEF ID APAR parametros FPAR SETA tipo DPONTOS . NOVALINHA INDENTA comandos DEDENTA  (4)
+
+	NOVALINHA  shift 158
+	.  error
+
+
+state 151
+	cmd_if : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA .  (41)
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA . ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+
+	ELSE  shift 159
+	$end  reduce 41
+	INT  reduce 41
+	FLOAT  reduce 41
+	BOOL  reduce 41
+	ID  reduce 41
+	STRING  reduce 41
+	DEDENTA  reduce 41
+	RETURN  reduce 41
+	APAR  reduce 41
+	IF  reduce 41
+	WHILE  reduce 41
+	DPONTOS  reduce 41
+	FOR  reduce 41
+	RANGE  reduce 41
+	NOT  reduce 41
+	PRINT  reduce 41
+
+
+state 152
+	cmd_while : WHILE expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA .  (43)
+
+	.  reduce 43
+
+
+state 153
+	cmd_for : FOR expressao IN comando DPONTOS NOVALINHA INDENTA . comandos DEDENTA  (44)
+	comandos : .  (34)
+
+	.  reduce 34
+
+	comandos  goto 160
+
+
+state 154
+	cmd_range3 : RANGE APAR INT VIRG INT VIRG INT . FPAR  (47)
+
+	FPAR  shift 161
+	.  error
+
+
+state 155
+	cmd_chamada_func : expressao ATRIB ID APAR argumentos FPAR NOVALINHA .  (15)
+
+	.  reduce 15
+
+
+state 156
+	cmd_input : expressao ATRIB INPUT APAR expressao FPAR NOVALINHA .  (38)
+
+	.  reduce 38
+
+
+state 157
+	cmd_int_parse : expressao ATRIB INT_PARSE APAR expressao FPAR NOVALINHA .  (36)
+
+	.  reduce 36
+
+
+state 158
+	funcao : DEF ID APAR parametros FPAR SETA tipo DPONTOS NOVALINHA . INDENTA comandos DEDENTA  (4)
+
+	INDENTA  shift 162
+	.  error
+
+
+state 159
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE . DPONTOS NOVALINHA INDENTA comandos DEDENTA  (42)
+
+	DPONTOS  shift 163
+	.  error
+
+
+state 160
+	comandos : comandos . comando  (35)
+	cmd_for : FOR expressao IN comando DPONTOS NOVALINHA INDENTA comandos . DEDENTA  (44)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 12
+	STRING  shift 13
+	DEDENTA  shift 164
+	RETURN  shift 14
+	APAR  shift 15
+	IF  shift 16
+	WHILE  shift 17
+	FOR  shift 18
+	RANGE  shift 19
+	NOT  shift 20
+	PRINT  shift 21
+	.  error
+
+	expressao  goto 22
+	cmd_chamada_func  goto 23
+	comando  goto 24
+	cmd_atrib  goto 25
+	cmd_if_else  goto 26
+	cmd_if  goto 27
+	cmd_while  goto 28
+	cmd_for  goto 29
+	cmd_range1  goto 30
+	cmd_range2  goto 31
+	cmd_range3  goto 32
+	cmd_atribMAIS  goto 33
+	cmd_atribMENOS  goto 34
+	cmd_atribVEZES  goto 35
+	cmd_atribDIV  goto 36
+	cmd_atribMOD  goto 37
+	cmd_retorno  goto 38
+	cmd_print  goto 39
+	cmd_input  goto 40
+	cmd_int_parse  goto 41
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 161
+	cmd_range3 : RANGE APAR INT VIRG INT VIRG INT FPAR .  (47)
+
+	.  reduce 47
+
+
+state 162
+	funcao : DEF ID APAR parametros FPAR SETA tipo DPONTOS NOVALINHA INDENTA . comandos DEDENTA  (4)
+	comandos : .  (34)
+
+	.  reduce 34
+
+	comandos  goto 165
+
+
+state 163
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS . NOVALINHA INDENTA comandos DEDENTA  (42)
+
+	NOVALINHA  shift 166
+	.  error
+
+
+state 164
+	cmd_for : FOR expressao IN comando DPONTOS NOVALINHA INDENTA comandos DEDENTA .  (44)
+
+	.  reduce 44
+
+
+state 165
+	funcao : DEF ID APAR parametros FPAR SETA tipo DPONTOS NOVALINHA INDENTA comandos . DEDENTA  (4)
+	comandos : comandos . comando  (35)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 12
+	STRING  shift 13
+	DEDENTA  shift 167
+	RETURN  shift 14
+	APAR  shift 15
+	IF  shift 16
+	WHILE  shift 17
+	FOR  shift 18
+	RANGE  shift 19
+	NOT  shift 20
+	PRINT  shift 21
+	.  error
+
+	expressao  goto 22
+	cmd_chamada_func  goto 23
+	comando  goto 24
+	cmd_atrib  goto 25
+	cmd_if_else  goto 26
+	cmd_if  goto 27
+	cmd_while  goto 28
+	cmd_for  goto 29
+	cmd_range1  goto 30
+	cmd_range2  goto 31
+	cmd_range3  goto 32
+	cmd_atribMAIS  goto 33
+	cmd_atribMENOS  goto 34
+	cmd_atribVEZES  goto 35
+	cmd_atribDIV  goto 36
+	cmd_atribMOD  goto 37
+	cmd_retorno  goto 38
+	cmd_print  goto 39
+	cmd_input  goto 40
+	cmd_int_parse  goto 41
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 166
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA . INDENTA comandos DEDENTA  (42)
+
+	INDENTA  shift 168
+	.  error
+
+
+state 167
+	funcao : DEF ID APAR parametros FPAR SETA tipo DPONTOS NOVALINHA INDENTA comandos DEDENTA .  (4)
+
+	.  reduce 4
+
+
+state 168
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA . comandos DEDENTA  (42)
+	comandos : .  (34)
+
+	.  reduce 34
+
+	comandos  goto 169
+
+
+state 169
+	comandos : comandos . comando  (35)
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos . DEDENTA  (42)
+
+	INT  shift 9
+	FLOAT  shift 10
+	BOOL  shift 11
+	ID  shift 12
+	STRING  shift 13
+	DEDENTA  shift 170
+	RETURN  shift 14
+	APAR  shift 15
+	IF  shift 16
+	WHILE  shift 17
+	FOR  shift 18
+	RANGE  shift 19
+	NOT  shift 20
+	PRINT  shift 21
+	.  error
+
+	expressao  goto 22
+	cmd_chamada_func  goto 23
+	comando  goto 24
+	cmd_atrib  goto 25
+	cmd_if_else  goto 26
+	cmd_if  goto 27
+	cmd_while  goto 28
+	cmd_for  goto 29
+	cmd_range1  goto 30
+	cmd_range2  goto 31
+	cmd_range3  goto 32
+	cmd_atribMAIS  goto 33
+	cmd_atribMENOS  goto 34
+	cmd_atribVEZES  goto 35
+	cmd_atribDIV  goto 36
+	cmd_atribMOD  goto 37
+	cmd_retorno  goto 38
+	cmd_print  goto 39
+	cmd_input  goto 40
+	cmd_int_parse  goto 41
+	expr1  goto 42
+	expr2  goto 43
+	expr3  goto 44
+	expr4  goto 45
+	expr5  goto 46
+	operando  goto 47
+	variavel  goto 48
+
+
+state 170
+	cmd_if_else : IF expressao DPONTOS NOVALINHA INDENTA comandos DEDENTA ELSE DPONTOS NOVALINHA INDENTA comandos DEDENTA .  (42)
+
+	.  reduce 42
+
+
+66 terminals, 38 nonterminals
+81 grammar rules, 171 states
