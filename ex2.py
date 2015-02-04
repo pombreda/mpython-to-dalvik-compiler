@@ -4,3 +4,5 @@ def contador(a: int, b: int) -> int:
      for i in range(5):
         soma = soma + a + b
      return soma
+
+a = contador(2,3)

@@ -152,8 +152,8 @@ let rec procuraParam nome params =
     match params with
         [] -> None
     | param :: params ->
-        if ((fst param) <> nome) then
-           procuraParam nome params
+        if ((fst param) <> nome) then(
+           procuraParam nome params)
         else
            Some (snd param)
 
@@ -209,3 +209,6 @@ let tabela_simb =
      ( Hashtbl.add tab "a" entA;
       Hashtbl.add tab "f" entF;
       tab )
+
+let imprime_tbl amb =
+    Hashtbl.iter (fun tbs _ -> print_endline tbs)  amb

@@ -45,12 +45,12 @@ let sem_arq arq =
   let arv = sint_arq arq in
   semantico arv
 
- (*  let arvtab_str arq =
+(*  let arvtab_str arq =
     let ic = open_in arq in
     let lexbuf = Lexing.from_channel ic in
-    let asa = sintatico lexbuf in
-    let _ = close_in ic in
-    let tabSimb = semantico asa in (asa, tabSimb) *)
+    let arv = sintatico lexbuf in
+    close_in ic;
+    let tabSimb = semantico arv in (arv, tabSimb) *)
 
 (* let interpretador str =
   let lexbuf = Lexing.from_string str in
