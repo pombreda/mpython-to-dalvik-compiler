@@ -211,4 +211,4 @@ let tabela_simb =
       tab )
 
 let imprime_tbl amb =
-    Hashtbl.iter (fun tbs _ -> print_endline tbs)  amb
+    Hashtbl.iter (fun tbs _ -> print_endline tbs)  amb;

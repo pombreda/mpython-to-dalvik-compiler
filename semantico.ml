@@ -53,7 +53,7 @@ let insere_var amb nome tipo current =
 				                			  Some v ->  v.tipagem;
 				              			| None -> print_endline("None");(* tenta encontrar variavel global *)
 							                try (match (Hashtbl.find amb nome) with
-							                    (EntVar v) ->   imprime_tbl;v.tipagem
+							                    (EntVar v) ->   imprime_tbl amb;v.tipagem
 							            	| _ -> print_endline("Não Acha!");Hashtbl.add (tabFn.varLocais) nome  (cria_ent_var (Some tipo));
 							                  	     (Some TInt)
 							                )
@@ -127,7 +127,7 @@ and verifica_primitiva op t1 t2 =
      try
 	let tipos_op = Hashtbl.find ambfun op in
 		verifica_op t1 t2 tipos_op
-     with e-> print_endline "Erro: verifica_primitiva";
+     with e-> print_endline "Erro: verifica_primitiva" ;
                   raise e
 
 (* Verifica expressao *)
