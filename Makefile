@@ -2,14 +2,14 @@ CAMLC=ocamlc
 CAMLLEX=ocamllex
 CAMLYACC=ocamlyacc
 
-# compInter: compSem interpretador.cmo
+compInter: compSem interpretador.cmo
 
 compSem: compSint semantico.cmo
 
 compSint: lexIndenta.cmo sintatico.cmo
 
-# interpretador.cmo: asa.cmi interpretador.ml
-# 	$(CAMLC) -c interpretador.ml
+interpretador.cmo: asa.cmi interpretador.ml
+	$(CAMLC) -c interpretador.ml
 
 asa.cmi: asa.ml
 	$(CAMLC) -c asa.ml

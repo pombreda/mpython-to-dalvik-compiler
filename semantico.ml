@@ -14,7 +14,9 @@ let erro nome pos msg =
 let tab2list tab = Hashtbl.fold (fun c v ls -> (c,v) :: ls) tab []
 let ambfun =
 	let amb = Hashtbl.create 23 in
-		Hashtbl.add amb Mais [ ((Some TInt), (Some TInt), (Some TInt)) ; ((Some TFloat), (Some TFloat), (Some TFloat)); ((Some TInt),(Some TFloat), (Some TFloat)); ((Some TFloat),(Some TInt), (Some TFloat))] ;
+		Hashtbl.add amb Mais [((Some TInt), (Some TInt), (Some TInt))];
+		(* Hashtbl.add amb Igual [ ((Some TBool), (Some TInt), (Some TInt)); ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))]; *)
+		(* Hashtbl.add amb Mais [ ((Some TInt), (Some TInt), (Some TInt)) ; ((Some TFloat), (Some TFloat), (Some TFloat)); ((Some TFloat),(Some TFloat), (Some TInt)); ((Some TFloat),(Some TInt), (Some TFloat))] ;
 		Hashtbl.add amb Menos [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat), (Some TFloat), (Some TFloat)); ((Some TFloat),(Some TFloat),(Some TInt)); ((Some TFloat),(Some TInt),(Some TFloat))] ;
 		Hashtbl.add amb Mult [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat),(Some TFloat), (Some TFloat)); ( (Some TFloat), (Some TFloat),(Some TInt)); ((Some TFloat),(Some TInt),(Some TFloat))] ;
 		Hashtbl.add amb Div [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat),(Some TFloat), (Some TFloat)); ( (Some TFloat),(Some TFloat),(Some TInt)); ((Some TFloat),(Some TInt),(Some TFloat))] ;
@@ -27,15 +29,18 @@ let ambfun =
 		Hashtbl.add amb Modulo [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat),(Some TFloat), (Some TFloat))] ;
 		(*nao admite outros tipos de and e or que nao seja com bool*)
 		Hashtbl.add amb And [ ((Some TBool), (Some TBool), (Some TBool))];
-		Hashtbl.add amb Or [ ((Some TBool), (Some TBool), (Some TBool))];
+		Hashtbl.add amb Or [ ((Some TBool), (Some TBool), (Some TBool))]; *)
 	amb
 let tipo e = e.tipo
 (* Verifica se os tipos dos termos sao compativeis com o tipo do operador*)
 let rec verifica_op t1 t2 ls =
+	imprime_tipagem t1;
 	match ls with
 		(a1,a2,r)::ls -> if ((t1 == a1) && (t2 == a2)) then r
-		else verifica_op t1 t2 ls
+				else verifica_op t1 t2 ls
 		| [] -> failwith "verifica_op: O tipo dos operandos deveria ser o mesmo"
+
+(*"O nome ’" ^ current ^ "’ esta associado a uma variavel."*)
 
 (* Insere variavel em uma tabela e retorna o tipo, caso jÃ¡ exista apenas retorna o tipo *)
 let insere_var amb nome tipo current =
@@ -51,19 +56,23 @@ let insere_var amb nome tipo current =
 				     		with Not_found -> (* tenta encontrar parametro *)
 				           			(match (procuraParam nome tabFn.param) with
 				                			  Some v ->  v.tipagem;
-				              			| None -> print_endline("None");(* tenta encontrar variavel global *)
+				              			| None ->(* tenta encontrar variavel global *)
 							                try (match (Hashtbl.find amb nome) with
-							                    (EntVar v) ->   imprime_tbl amb;v.tipagem
-							            	| _ -> print_endline("Não Acha!");Hashtbl.add (tabFn.varLocais) nome  (cria_ent_var (Some tipo));
+							                    (EntVar v) ->   (* imprime_tbl; *)v.tipagem
+							            	| _ -> Hashtbl.add (tabFn.varLocais) nome  (cria_ent_var (Some tipo));
 							                  	     (Some TInt)
 							                )
 							            with Not_found -> Hashtbl.add (tabFn.varLocais) nome  (cria_ent_var (Some tipo));
 							                  	     (Some TInt)
 				            		)
+
 				    )
+
 
 		  	with e-> failwith("Erro: insere_var1");
 		  	raise e
+
+
 	) else
 	(
 		try
@@ -126,8 +135,8 @@ and verifica_tipos_atrib e1 e2 amb =
 and verifica_primitiva op t1 t2 =
      try
 	let tipos_op = Hashtbl.find ambfun op in
-		verifica_op t1 t2 tipos_op
-     with e-> print_endline "Erro: verifica_primitiva" ;
+		imprime_operador op;verifica_op t1 t2 tipos_op
+     with e-> print_endline "Erro: verifica_primitiva";
                   raise e
 
 (* Verifica expressao *)
@@ -142,9 +151,9 @@ and verifica_exp_dir amb expr current =
 									(if (expressao.tipo == (Some TGen)) then
 										erro "verifica_exp_dir" expressao.pos " operador not usado com variavel nao inicializada ");
 										expr.tipo <-(Some TBool) (*nao importa qual a expressao o not sempre vai ser bool*)
-		| Some(ExpBin (op,e1,e2)) -> verifica_exp_dir amb e1 current;
+		| Some(ExpBin (op,e1,e2)) ->( print_endline ("Erro: verifica_exp_dir ExpBin ");verifica_exp_dir amb e1 current;
 							   verifica_exp_dir amb e2 current;
-							   	expr.tipo <- verifica_primitiva op (tipo e1) (tipo e2)
+							   	expr.tipo <- verifica_primitiva op (tipo e1) (tipo e2))
 		| _ -> print_endline ("A expressao contem erros: ");
 		failwith "Erro semantico: verifica_exp_dir"
 
@@ -249,7 +258,7 @@ and verifica_arg arg =
 
 (* Verifica comandos *)
 let rec verifica_cmds amb cmds current param =
-	imprime_tbl amb;
+	(* imprime_tbl amb; *)
 	match cmds with [] -> ignore()
 		| cmd :: cmds -> verifica_cmd amb cmd current param;
 				   verifica_cmds amb cmds current param
@@ -257,7 +266,7 @@ let rec verifica_cmds amb cmds current param =
 
 (* Verifica comando *)
 and verifica_cmd amb cmd current param =
-	imprime_tbl amb;
+	(* imprime_tbl amb; *)
 	match cmd.vcmd with
 		| ChamaFuncaoAtrib (e1, nomeFunc, arg) -> let tiporetorno = verifica_retorno_func amb nomeFunc in
 								(match tiporetorno with
@@ -274,7 +283,7 @@ and verifica_cmd amb cmd current param =
 					verifica_exp_dir amb e2 current
 
 		| CmdIntParse (e1, e2) ->  ignore()
-		| CmdAtrib (e1,e2) ->  imprime_tbl amb;verifica_exp_dir amb e2 current;
+		| CmdAtrib (e1,e2) ->  (* imprime_tbl amb; *)verifica_exp_dir amb e2 current;
 					let t1=tipo e2 in
 					(match t1 with
 						| (Some TInt) -> verifica_exp_esq amb e1 TInt current
@@ -333,7 +342,7 @@ let rec verifica_funcs amb funcs =
 (* Verificacao de funcao *)
 and verifica_func amb func = insere_nova_funcao amb func;
 				current_func := func.idF;
-				print_endline ("A funcao ’" ^ func.idF ^ "’ ja foi inserida.");
+				(* print_endline ("A funcao ’" ^ func.idF ^ "’ ja foi inserida."); *)
 				verifica_cmds amb func.cmdsF !current_func func.paramsF;
 	try
 		let entFun = Hashtbl.find amb !current_func in
@@ -367,5 +376,5 @@ let verifica_prog amb arv = verifica_funcs amb arv.funcsP;
 let semantico arv =
 	let ambiente = Hashtbl.create 23 in
 		verifica_prog ambiente arv;
-	imprime_tbl ambiente;
+	(* imprime_tbl ambiente; *)
 	ambiente

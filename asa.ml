@@ -210,5 +210,61 @@ let tabela_simb =
       Hashtbl.add tab "f" entF;
       tab )
 
+ let imprime_tipo_base t =
+     match t with
+     TInt -> print_endline("Int")
+    | TFloat -> print_endline("float")
+    | TString -> print_endline("string")
+    | TVoid -> print_endline("void")
+    | TGen -> print_endline("gen")
+    | TBool -> print_endline("bool")
+
+let imprime_tipagem t =
+  match t with
+      Some t -> imprime_tipo_base t
+    | None -> print_endline("None")
+
+ let imprime_operador op =
+     match op with
+     Mais -> print_endline("Mais")
+    | Menos -> print_endline("Menos")
+    | Mult -> print_endline("Mult")
+    | Div -> print_endline("Div")
+    | Maior -> print_endline("Maior")
+    | Menor -> print_endline("Menor")
+    | Igual -> print_endline("Igual")
+    | Diferente -> print_endline("Diferente")
+    | MaiorIgual -> print_endline("MaiorIgual")
+    | MenorIgual -> print_endline("MenorIgual")
+    | Modulo -> print_endline("Modulo")
+    | And -> print_endline("And")
+    | Or -> print_endline("Or")
+
+(*
+let imprime_entrada c v =
+  printf "%s: " c;
+  match v with
+    EntVar entVar -> (printf "var\n" ;
+                              printf "tipagem: %s\n" (imprime_tipo_base entVar.tipagem)
+                            )
+
+  | EntFn entFn ->   ( printf "funcao\n"(* ;
+                               printf "tipagem %s\n" (imprime_tipo_base_fun entFn.varLocais) *)
+                             )
+
 let imprime_tbl amb =
-    Hashtbl.iter (fun tbs _ -> print_endline tbs)  amb;
+    Hashtbl.iter  imprime_entrada  amb
+
+
+and entradaFuncao = {  varLocais: (string, entradaVariavel) Hashtbl.t;
+                                    mutable tiporetorno: tipo_base option;
+                                    param: parametros
+          }
+
+(* Entrada de uma variavel na tabela de simbolos *)
+and entradaVariavel = {  mutable tipagem: tipo_base option;
+                                      v_inicial: expressao option;
+                                      mutable endereco: int option;
+                                      mutable valor_variavel: expr option
+            }
+ *)
