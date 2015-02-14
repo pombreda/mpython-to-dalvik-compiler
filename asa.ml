@@ -119,18 +119,22 @@ and entradaFuncao = {  varLocais: (string, entradaVariavel) Hashtbl.t;
 and entradaVariavel = {  mutable tipagem: tipo_base option;
                                       v_inicial: expressao option;
                                       mutable endereco: int option;
-                                      mutable valor_variavel: expr option
+                                      mutable valor_variavel: int
 					  }
 
 (* Tipos de entrada que a tabela de simbolos aceita *)
 and entradaTabela = EntVar of entradaVariavel
                                  | EntFn of entradaFuncao
 
+
+
+
+
 (* Cria uma entrada do tipo variavel para a tabela de simbolos de acordo com o tipo recebido *)
 let cria_ent_var tipo = {  tipagem = tipo ;
                                       v_inicial = None;
                                       endereco = None;
-                                      valor_variavel = None }
+                                      valor_variavel = 0 }
 
 (* Cria uma entrada do tipo funcao para a tabela de simbolos de acordo com o tipo e parametros recebidos *)
 let cria_ent_func tipo par locais= { varLocais = locais;
@@ -174,6 +178,12 @@ let busca_var_fun amb regfn nome =
             )
     )
     | _ -> failwith "busca_var_fun: erro"
+
+(* let substitui amb reg nome=
+  let entrada = busca_var_fun amb reg nome in
+      Hashtbl.replace amb nome {entrada with valor_variavel = 2} *)
+
+
 
 (* let busca_tipo_fun amb regfn nome =
   match regfn with

@@ -379,42 +379,75 @@ let semantico arv =
     (* imprime_tbl ambiente; *)
     ambiente *)
 
+and analisa_var amb var current =
+	match var with
+		| VarSimples nome -> (
+			let tabVar = Hashtbl.find amb current in
+				 match tabVar with
+				  EntFn tabFn ->
+					(try (* tenta encontrar variavel local *)
+						 let reg = Hashtbl.find tabFn.varLocais nome in
+						 reg.valor_variavel
+							with Not_found -> (* tenta encontrar parametro *)
+									(match (procuraParam nome tabFn.param) with
+											  Some v ->   v.valor_variavel
+										| None ->  ("O nome ’" ^ current ^ "’ aparece.");(* tenta encontrar variavel global *)
+										   try
+											 let entrada = Hashtbl.find amb nome in
+												(match entrada with
+													(EntVar v) ->   v.valor_variavel
+												  | _ -> failwith "busca_var_fun: erro"
+												)
+										 with e-> print_endline "Erro: verifica_var";
+													   raise e
+									)
+					)
+					| _ -> failwith "analisa_var: Não variavel")
 
 
 
- and avalia_exp expr amb  =
+and avalia_exp  expr amb current =
+    match expr.valor with
+        Some (ExpInt v )-> (Some (ExpInt v))
+        | Some(ExpFloat v )-> (Some (ExpFloat v))
+        | Some (ExpString v) -> (Some (ExpString v))
+        | Some(ExpBool v)    -> (Some (ExpBool v))
+        (* | Some(ExpUn (not,expressao)) -> ignore() *)
+        | Some(ExpVar v) -> (analisa_var amb v current)
+        | Some(ExpBin (op,e1,e2)) -> avalia_bin (op, e1, e2) amb current
+        | _ -> print_endline ("avalia_exp: A expressao contem erros: ");
+        failwith "Erro interpretador: avalia_exp"
+
+(* and avalia_exp amb expr current  =
    match expr.valor with
               (Some ExpInt v) -> (Some (ExpInt v))
             | (Some ExpFloat v) -> (Some (ExpFloat v))
             | (Some ExpString v) -> (Some (ExpString v))
             | (Some ExpBool v) -> (Some (ExpBool v))
-            | (Some ExpUn _ )-> (Some (ExpInt 0)) (* falta implementar*)
-            | (Some ExpGen) -> (Some ExpGen)
-            (* | (Some ExpVar (VarSimples _))  -> let entrada = valorVariavel ts expr.valor in entrada.valor *)
             | (Some ExpVar v) -> let entrada = Hashtbl.find amb v in entrada.valor
             (* | (Some ExpVar (VarSimples v))  -> let entrada = Hashtbl.find ts v in entrada.valor_variavel *)
             | (Some ExpBin (op,e1,e2)) -> avalia_bin (op, e1, e2) amb
+*)
 
 
-
-and avalia_bin (op, exp1, exp2) amb =
-  match (avalia_exp exp1 amb) with
+and avalia_bin (op, exp1, exp2) amb current =
+  match (avalia_exp exp1 amb current) with
     (Some ExpInt v1) ->
-      (match (avalia_exp exp2 amb) with
+      (match (avalia_exp exp2 amb current) with
           (Some ExpInt v2 )-> avalia_op_int_int op v1 v2
         | (Some ExpFloat v2) -> avalia_op_int_float op v1 v2
         | _ -> failwith "Operador invalido")
     | (Some ExpFloat v1) ->
-      (match (avalia_exp exp2 amb) with
+      (match (avalia_exp exp2 amb current) with
           (Some ExpInt v2) -> avalia_op_float_int op v1 v2
         | (Some ExpFloat v2) -> avalia_op_float_float op v1 v2
         | _ -> failwith "Operador invalido")
     | (Some ExpString v1) ->
-      (match (avalia_exp exp2 amb) with
+      (match (avalia_exp exp2 amb current) with
           (Some ExpString v2) -> avalia_op_string_string op v1 v2
         | _ -> failwith "Operador invalido")
      | (Some ExpBool v1) ->
-      (match (avalia_exp exp2 amb) with
+      (match (avalia_exp exp2 amb current) with
         | (Some ExpBool v2) -> avalia_op_bool_bool op v1 v2
         | _ -> failwith "Operador invalido")
   | _ -> failwith "Operador invalido"
@@ -497,15 +530,7 @@ and avalia_op_bool_bool op v1 v2 =
     | _ -> failwith "Operacao invalida"
 
 
-  let avalia_print e =
-  match e with
-        (Some (ExpInt v)) -> print_int(v); print_char('\n')
-      | (Some (ExpFloat v)) -> print_float(v); print_char('\n')
-      | (Some (ExpString v)) -> print_string(v); print_char('\n')
-      | (Some (ExpBool v)) -> if (v == true) then
-                                print_string ("true")
-                             else print_string("false")
-      | _ -> ignore()
+
 
 (* let avalia_input e1 e2 amb =
   (match e2 with
@@ -622,6 +647,32 @@ let rec avalia_cmds amb comandos =
             | CmdReturn _ -> ignore()
  *)
 
+  let avalia_print e =
+  match e with
+        (Some (ExpInt v)) -> print_int(v); print_char('\n')
+      | (Some (ExpFloat v)) -> print_float(v); print_char('\n')
+      | (Some (ExpString v)) -> print_string(v); print_char('\n')
+      | (Some (ExpBool v)) -> if (v == true) then
+                                print_string ("true")
+                             else print_string("false")
+      | _ -> ignore()
+
+
+
+(* let avalia_atrib v expr amb current=
+  let valor = avalia_exp expr amb current  in
+    let entrada = Hashtbl.find amb v in
+      Hashtbl.replace amb v {entrada with valor = valor} *)
+
+let avalia_atrib v expr amb current=
+  let valor = avalia_exp expr amb current  in
+       match v with
+        | VarSimples nome ->
+            let entrada = busca_var_fun amb current nome in
+                Hashtbl.replace amb v {entrada with valor = valor}
+
+
+
 let rec avalia_cmds amb cmds current param =
     match cmds with [] -> ignore()
         | cmd :: cmds -> avalia_cmd amb cmd current param;
@@ -633,7 +684,7 @@ and avalia_cmd amb cmd current param =
               CmdPrint (e) -> avalia_print (e.valor)
             | CmdInput  (e,amb) -> ignore()(* avalia_input (e.valor) amb *)
             | CmdIntParse _ (*e1, e2*) -> ignore() (*avalia_intparse e1 e2 amb*)
-            | CmdAtrib (v,e) ->  ignore()(* avalia_atrib v e amb *)
+            | CmdAtrib (v,e) ->  avalia_atrib v e amb current
             | CmdIf _ -> ignore()
             | CmdWhile _ -> ignore()
             | CmdFor _ -> ignore()

@@ -2,13 +2,13 @@
 #load "sintatico.cmo";;
 #load "lexico.cmo";;
 #load "lexIndenta.cmo";;
-#load "semantico.cmo";;
-#load "interpretador.cmo";;
+#load "semantico.cmo";;(*
+#load "interpretador.cmo";; *)
 
 open Asa;;
 open Sintatico;;
 open Semantico;;
-open Interpretador;;
+(* open Interpretador;; *)
 open Printf;;
 open Filename;;
 
@@ -52,10 +52,10 @@ let sem_arq arq =
     close_in ic;
     let tabSimb = semantico arv in (arv, tabSimb) *)
 
-let interp arq =
+(* let interp arq =
   let arv = sint_arq arq in
   let amb = semantico arv in
-  interpretador amb arv
+  interpretador amb arv *)
 
 (*
 let interp arq =

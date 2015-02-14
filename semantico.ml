@@ -14,7 +14,7 @@ let erro nome pos msg =
 let tab2list tab = Hashtbl.fold (fun c v ls -> (c,v) :: ls) tab []
 let ambfun =
 	let amb = Hashtbl.create 23 in
-		Hashtbl.add amb Mais [((Some TInt), (Some TInt), (Some TInt))];
+		Hashtbl.add amb Mais [((TInt), (TInt), (TInt))];
 		(* Hashtbl.add amb Igual [ ((Some TBool), (Some TInt), (Some TInt)); ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))]; *)
 		(* Hashtbl.add amb Mais [ ((Some TInt), (Some TInt), (Some TInt)) ; ((Some TFloat), (Some TFloat), (Some TFloat)); ((Some TFloat),(Some TFloat), (Some TInt)); ((Some TFloat),(Some TInt), (Some TFloat))] ;
 		Hashtbl.add amb Menos [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat), (Some TFloat), (Some TFloat)); ((Some TFloat),(Some TFloat),(Some TInt)); ((Some TFloat),(Some TInt),(Some TFloat))] ;
@@ -33,12 +33,24 @@ let ambfun =
 	amb
 let tipo e = e.tipo
 (* Verifica se os tipos dos termos sao compativeis com o tipo do operador*)
-let rec verifica_op t1 t2 ls =
+let rec verifica_op t1 t2 ls =(*
+	print_endline "verifica_op";
+	print_endline "t1:";
 	imprime_tipagem t1;
+	print_endline "t2:";
+	imprime_tipagem t2; *)
 	match ls with
-		(a1,a2,r)::ls -> if ((t1 == a1) && (t2 == a2)) then r
+		(a1,a2,r)::ls -> begin
+			(* print_endline "a1:";
+			imprime_tipagem a1;
+			print_endline "a2:";
+			imprime_tipagem a2; *)
+			if ((t1 == a1) && (t2 == a2)) then r
 				else verifica_op t1 t2 ls
+		end
 		| [] -> failwith "verifica_op: O tipo dos operandos deveria ser o mesmo"
+
+
 
 (*"O nome ’" ^ current ^ "’ esta associado a uma variavel."*)
 
@@ -132,10 +144,26 @@ and verifica_tipos_atrib e1 e2 amb =
 	end
 
 (* Verifica se as parcelas correspondem aos tipos dos operadores *)
+(*  let converte_tipo_base t =
+     match t with
+     	TInt -> print_endline("Int")
+         | TFloat -> print_endline("float")
+         | TString -> print_endline("string")
+         | TVoid -> print_endline("void")
+         | TGen -> print_endline("gen")
+         | TBool -> print_endline("bool")
+ *)
+and converte_tipo t1 =
+       match t1 with
+	TInt -> (Some TInt)
+	| TFloat -> (Some TFloat)
+
 and verifica_primitiva op t1 t2 =
      try
 	let tipos_op = Hashtbl.find ambfun op in
-		imprime_operador op;verifica_op t1 t2 tipos_op
+		 match t1 with
+			(Some TInt) -> verifica_op TInt TInt tipos_op
+		         | (Some TFloat) -> verifica_op TFloat TFloat tipos_op
      with e-> print_endline "Erro: verifica_primitiva";
                   raise e
 
@@ -151,9 +179,9 @@ and verifica_exp_dir amb expr current =
 									(if (expressao.tipo == (Some TGen)) then
 										erro "verifica_exp_dir" expressao.pos " operador not usado com variavel nao inicializada ");
 										expr.tipo <-(Some TBool) (*nao importa qual a expressao o not sempre vai ser bool*)
-		| Some(ExpBin (op,e1,e2)) ->( print_endline ("Erro: verifica_exp_dir ExpBin ");verifica_exp_dir amb e1 current;
+		| Some(ExpBin (op,e1,e2)) ->( verifica_exp_dir amb e1 current;
 							   verifica_exp_dir amb e2 current;
-							   	expr.tipo <- verifica_primitiva op (tipo e1) (tipo e2))
+							   	expr.tipo <- (converte_tipo (verifica_primitiva op  (tipo e1)  (tipo e2))))
 		| _ -> print_endline ("A expressao contem erros: ");
 		failwith "Erro semantico: verifica_exp_dir"
 
@@ -170,7 +198,7 @@ and verifica_exp_esq amb expr tipo current =
 										expr.tipo <-(Some TBool) (*nao importa qual a expressao o not sempre vai ser bool*)
 		| Some(ExpBin (op,e1,e2)) -> verifica_exp_dir amb e1 current;
 							   verifica_exp_dir amb e2 current;
-							   	expr.tipo <- verifica_primitiva op  e1.tipo e2.tipo
+							   	expr.tipo <- (converte_tipo (verifica_primitiva op  e1.tipo  e2.tipo))
 		| _ -> print_endline ("A expressao contem erros: ");
 		failwith "Erro semantico: verifica_exp_dir"
 and verifica_retorno_func amb nomeFunc =
@@ -205,7 +233,7 @@ let rec tipo_retorno amb expr current param =
 												    expr.tipo
 						| (Some ExpBin (op,e1,e2)) -> ignore(tipo_retorno amb e1 current param);
 											   ignore(tipo_retorno amb e2 current param);
-											   expr.tipo <- (verifica_primitiva op (tipo e1) (tipo e2)); expr.tipo
+											   expr.tipo <-  (converte_tipo (verifica_primitiva op  (tipo e1)  (tipo e2))); expr.tipo
 						| _ -> print_endline ("O nome ’" ^ current ^ "’ esta associado a uma variavel.");
 						failwith "Erro semantico: tipo_var_retorno")
 			| _ -> print_endline ("O nome ’" ^ current ^ "’ esta associado a uma variavel.");
