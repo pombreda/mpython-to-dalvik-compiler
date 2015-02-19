@@ -310,7 +310,10 @@ and verifica_cmd amb cmd current param =
 					verifica_exp_esq amb e1 TString current;
 					verifica_exp_dir amb e2 current
 
-		| CmdIntParse (e1, e2) ->  ignore()
+		| CmdIntParse (e1, e2) ->  e1.tipo <- (Some TInt);
+					       verifica_exp_esq amb e1 TInt current;
+					       verifica_exp_dir amb e2 current
+
 		| CmdAtrib (e1,e2) ->  (* imprime_tbl amb; *)verifica_exp_dir amb e2 current;
 					let t1=tipo e2 in
 					(match t1 with

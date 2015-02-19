@@ -669,7 +669,7 @@ let avalia_atrib v expr amb current=
        match v with
         | VarSimples nome ->
             let entrada = busca_var_fun amb current nome in
-                Hashtbl.replace amb v {entrada with valor = valor}
+                entrada.valor_variavel <- valor
 
 
 

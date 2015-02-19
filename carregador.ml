@@ -2,8 +2,8 @@
 #load "sintatico.cmo";;
 #load "lexico.cmo";;
 #load "lexIndenta.cmo";;
-#load "semantico.cmo";;(*
-#load "interpretador.cmo";; *)
+#load "semantico.cmo";;
+(* #load "interpretador.cmo";; *)
 
 open Asa;;
 open Sintatico;;
