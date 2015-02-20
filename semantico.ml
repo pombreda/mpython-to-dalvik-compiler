@@ -14,22 +14,20 @@ let erro nome pos msg =
 let tab2list tab = Hashtbl.fold (fun c v ls -> (c,v) :: ls) tab []
 let ambfun =
 	let amb = Hashtbl.create 23 in
-		Hashtbl.add amb Mais [((TInt), (TInt), (TInt))];
-		(* Hashtbl.add amb Igual [ ((Some TBool), (Some TInt), (Some TInt)); ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))]; *)
-		(* Hashtbl.add amb Mais [ ((Some TInt), (Some TInt), (Some TInt)) ; ((Some TFloat), (Some TFloat), (Some TFloat)); ((Some TFloat),(Some TFloat), (Some TInt)); ((Some TFloat),(Some TInt), (Some TFloat))] ;
-		Hashtbl.add amb Menos [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat), (Some TFloat), (Some TFloat)); ((Some TFloat),(Some TFloat),(Some TInt)); ((Some TFloat),(Some TInt),(Some TFloat))] ;
-		Hashtbl.add amb Mult [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat),(Some TFloat), (Some TFloat)); ( (Some TFloat), (Some TFloat),(Some TInt)); ((Some TFloat),(Some TInt),(Some TFloat))] ;
-		Hashtbl.add amb Div [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat),(Some TFloat), (Some TFloat)); ( (Some TFloat),(Some TFloat),(Some TInt)); ((Some TFloat),(Some TInt),(Some TFloat))] ;
-		Hashtbl.add amb Menor [ ((Some TBool), (Some TInt), (Some TInt)); ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))] ;
-		Hashtbl.add amb Maior [ ((Some TBool), (Some TInt), (Some TInt)); ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))] ;
-		Hashtbl.add amb Igual [ ((Some TBool), (Some TInt), (Some TInt)); ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))] ;
-		Hashtbl.add amb Diferente [ ((Some TBool), (Some TInt), (Some TInt));  ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))] ;
-		Hashtbl.add amb MaiorIgual [ ((Some TBool), (Some TInt), (Some TInt));((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))] ;
-		Hashtbl.add amb MenorIgual [ ((Some TBool), (Some TInt), (Some TInt)); ((Some TBool), (Some TFloat), (Some TFloat)); ((Some TBool),(Some TInt),(Some TFloat));((Some TBool),(Some TFloat),(Some TInt))] ;
-		Hashtbl.add amb Modulo [ ((Some TInt), (Some TInt), (Some TInt)); ((Some TFloat),(Some TFloat), (Some TFloat))] ;
+		Hashtbl.add amb Mais [ (TInt, TInt, TInt) ; (TFloat, TFloat, TFloat); (TInt,TFloat,TFloat); (TFloat,TInt,TFloat)] ;
+		Hashtbl.add amb Menos [ (TInt, TInt, TInt); (TFloat, TFloat, TFloat); (TInt,TFloat,TFloat); (TFloat,TInt,TFloat)] ;
+		Hashtbl.add amb Mult [(TInt, TInt, TInt); (TFloat, TFloat, TFloat); (TInt,TFloat,TFloat); (TFloat,TInt,TFloat)] ;
+		Hashtbl.add amb Div [(TInt, TInt, TInt); (TFloat, TFloat, TFloat); (TInt,TFloat,TFloat); (TFloat,TInt,TFloat)] ;
+		Hashtbl.add amb Menor [ (TInt, TInt, TBool); (TFloat, TFloat, TBool); (TInt,TFloat,TBool);(TFloat,TInt,TBool)] ;
+		Hashtbl.add amb Maior [ (TInt, TInt, TBool); (TFloat, TFloat, TBool); (TInt,TFloat,TBool);(TFloat,TInt,TBool)] ;
+		Hashtbl.add amb Igual [(TInt, TInt, TBool); (TFloat, TFloat, TBool); (TInt,TFloat,TBool);(TFloat,TInt,TBool)] ;
+		Hashtbl.add amb Diferente [(TInt, TInt, TBool); (TFloat, TFloat, TBool); (TInt,TFloat,TBool);(TFloat,TInt,TBool)] ;
+		Hashtbl.add amb MaiorIgual [(TInt, TInt, TBool); (TFloat, TFloat, TBool); (TInt,TFloat,TBool);(TFloat,TInt,TBool)] ;
+		Hashtbl.add amb MenorIgual [(TInt, TInt, TBool); (TFloat, TFloat, TBool); (TInt,TFloat,TBool);(TFloat,TInt,TBool)] ;
+		Hashtbl.add amb Modulo [ (TInt, TInt, TInt); (TFloat,TFloat, TFloat)] ;
 		(*nao admite outros tipos de and e or que nao seja com bool*)
-		Hashtbl.add amb And [ ((Some TBool), (Some TBool), (Some TBool))];
-		Hashtbl.add amb Or [ ((Some TBool), (Some TBool), (Some TBool))]; *)
+		Hashtbl.add amb And [ (TBool, TBool, TBool)];
+		Hashtbl.add amb Or [ (TBool, TBool, TBool)];
 	amb
 let tipo e = e.tipo
 (* Verifica se os tipos dos termos sao compativeis com o tipo do operador*)
@@ -157,6 +155,9 @@ and converte_tipo t1 =
        match t1 with
 	TInt -> (Some TInt)
 	| TFloat -> (Some TFloat)
+	| TBool -> (Some TBool)
+	| TVoid -> (Some TVoid)
+	| TString -> (Some TString)
 
 and verifica_primitiva op t1 t2 =
      try
@@ -200,7 +201,7 @@ and verifica_exp_esq amb expr tipo current =
 							   verifica_exp_dir amb e2 current;
 							   	expr.tipo <- (converte_tipo (verifica_primitiva op  e1.tipo  e2.tipo))
 		| _ -> print_endline ("A expressao contem erros: ");
-		failwith "Erro semantico: verifica_exp_dir"
+		failwith "Erro semantico: verifica_exp_esq"
 and verifica_retorno_func amb nomeFunc =
      try
 	let reg = Hashtbl.find amb nomeFunc in
@@ -304,7 +305,8 @@ and verifica_cmd amb cmd current param =
 									| (Some TBool) -> verifica_exp_esq amb e1 TBool current
 									| _ -> failwith("Erro: CmdAtrib")(* ;
 								verifica_args arg *)
-					)
+								)
+		(* | ChamaFuncaoVoid (nomeFunc, arg) -> TVoid *)
 		| CmdPrint (e) -> verifica_exp_dir amb e current
 		| CmdInput (e1, e2) -> e1.tipo <- (Some TString);
 					verifica_exp_esq amb e1 TString current;
@@ -363,6 +365,7 @@ let insere_nova_funcao amb func =
 			  | (Some TFloat) -> Hashtbl.add amb func.idF (EntFn (cria_ent_func TFloat func.paramsF func.varLocaisF))
 			  | (Some TString) -> Hashtbl.add amb func.idF (EntFn (cria_ent_func TString func.paramsF func.varLocaisF))
 			  | (Some TBool) -> Hashtbl.add amb func.idF (EntFn (cria_ent_func TBool func.paramsF func.varLocaisF))
+			  | (Some TVoid) -> Hashtbl.add amb func.idF (EntFn (cria_ent_func TVoid func.paramsF func.varLocaisF))
 			  | _ -> failwith("Erro: insere_nova_funcao")
 		         )
 

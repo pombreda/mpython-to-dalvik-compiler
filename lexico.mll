@@ -47,7 +47,8 @@
         ("range", RANGE);
         ("print", PRINT);
         ("raw_input", INPUT);
-        ("int",   INT_PARSE)
+        ("int",   INT_PARSE);
+        ("void", TIPOVOID)
         ]
 
 (* Valores booleanos sao armazenados como 1 para true e 0 para false. *)

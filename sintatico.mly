@@ -77,6 +77,8 @@ NOVALINHA INDENTA comandos DEDENTA
 /* define a estrutura de uma lista de funcoes e um parametro e cria o
 parametro */
 tipo:   INT_PARSE {Some TInt}
+        | TIPOVOID {Some TVoid}
+
         ;
 
 parametros: { [] }
