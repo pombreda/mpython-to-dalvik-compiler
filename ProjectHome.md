@@ -1,0 +1,1 @@
+Projeto para a disciplina "Construção de Compiladores", com o tema MiniPython para Dalvik, usando OCaml.
